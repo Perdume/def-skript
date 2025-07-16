@@ -1,0 +1,72 @@
+function getATK(pl: player) :: number:
+	set {_dmg} to (4 + (1+{leveling::defz::%{_pl}%::level}/4)^3) * (1 + {prestige::defz::%{_pl}%::attackdamage}*0.1)*(1 + {defz::upgrade::weapon::%{_pl}%}/6 + {defz::upgrade::swordupgrade::%{_pl}%}/20)
+	return {_dmg}
+function getATKBOW(pl: player) :: number:
+	set {_dmg} to (4 + (1+{leveling::defz::%{_pl}%::level}/4)^3) * (1 + {prestige::defz::%{_pl}%::attackdamage}*0.1)*(1 + {defz::upgrade::bowupgrade::%{_pl}%}/25)
+	return {_dmg}
+function getArmorLV(atc: entity) :: integer:
+	if "%{_atc}'s helmet%" contains "air":
+		return 0
+	if "%{_atc}'s helmet%" contains "leather":
+		return 1
+	if "%{_atc}'s helmet%" contains "gold":
+		return 2
+	if "%{_atc}'s helmet%" contains "chainmail":
+		return 3
+	if "%{_atc}'s helmet%" contains "iron":
+		return 4
+	if "%{_atc}'s helmet%" contains "diamond":
+		return 5
+	if "%{_atc}'s helmet%" contains "netherite":
+		return 6
+	return -1
+
+function getDMG(atk: player, vic: entity) :: number:
+	set {_dmg} to getATK({_atk})
+	set {_armor} to getArmorLV({_vic})
+	set {_protecLV} to {defz::%{_atk}'s world%::playing::round}
+	set {_setDMG} to mondamage({_dmg}, {_armor}, {_protecLV})
+	zsdebug("%{_atk}%", "Attack Reduce: %{_dmg} - {_setDMG}% (%100*({_dmg}-{_setDMG})/{_dmg}%%%)")
+	return {_setDMG}
+
+function getDMGBOW(atk: player, vic: entity) :: number:
+	set {_dmg} to getATKBOW({_atk})
+	set {_armor} to getArmorLV({_vic})
+	set {_protecLV} to {defz::%{_atk}'s world%::playing::round}
+	set {_setDMG} to mondamage({_dmg}, {_armor}, {_protecLV})
+	zsdebug("%{_atk}%", "Attack Reduce: %{_dmg} - {_setDMG}% (%100*({_dmg}-{_setDMG})/{_dmg}%%%)")
+	return {_setDMG}
+
+function mondamage(dmg: number, i1: integer, i2: integer) :: number:
+	if {_i1} is -1:
+		set {_tought} to 0
+		set {_dfp} to 0
+	if {_i1} is 0:
+		set {_tought} to 0
+		set {_dfp} to 0
+	else if {_i1} is 1:
+		set {_tought} to 0
+		set {_dfp} to 7
+	else if {_i1} is 2:
+		set {_tought} to 0
+		set {_dfp} to 11
+	else if {_i1} is 3:
+		set {_tought} to 0
+		set {_dfp} to 12
+	else if {_i1} is 4:
+		set {_tought} to 0
+		set {_dfp} to 15
+	else if {_i1} is 5:
+		set {_tought} to 0
+		set {_dfp} to 18
+	else if {_i1} is 6:
+		set {_tought} to 0
+		set {_dfp} to 19
+	set {_res} to max({_dfp} / 5, {_dfp} - {_dmg} / ( {_tought} / 4 + 2 ))
+	set {_res01} to min({_res}, 2000)
+	set {_vdmg} to {_dmg} * (1 - {_res01} / 16)
+	if {_i2} is set:
+		set {_res1} to {_vdmg} * ( 1 - {_i2} / 101)
+	else:
+		set {_res1} to {_vdmg}
+	return {_res1}

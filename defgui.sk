@@ -1,0 +1,338 @@
+on rightclick holding a book:
+	if {defz::%player's world%::playing::playing} is true:
+		if item is a book named "<purple>상점":
+			seld(player)
+		else if item is a book named "<purple>메타선택":
+			tetta(player)
+function tetta(pl: player):
+	set {defz::%{_pl}'s world%::playing::guiopened::%{_pl}%} to true
+	set metadata tag "DEFMETA" of {_pl} to chest inventory with 1 rows named "메타"
+	set slot 0 of metadata tag "DEFMETA" of {_pl} to wooden sword named "<reset>어태커" with lore "&a체력, HP를 조절할수 있습니다" and "<black>Fzem:^[wk639Ce-*"
+	set slot 2 of metadata tag "DEFMETA" of {_pl} to wooden sword named "<reset>힐러" with lore "&b주위 모든 플레이어들에게 HP를 회복합니다" and "&a우클릭을 하여 주위 플레이어들을 치료합니다" and "&a(최대 HP를 넘기면 일정 HP의 보호막이 생깁니다)" and "<black>Fzem:^[wk639Ce-*"
+	set slot 4 of metadata tag "DEFMETA" of {_pl} to wooden sword named "<reset>마법사" with lore "&a우클릭으로 모든 몬스터에게 검은색 구형을 쏩니다" and "&a몬스터가 적을수록 스킬의 대미지가 증가합니다" and "&cHP를 10으로 시작합니다" and "&c마나가 많아질수록 칼로 인한 공력력이 감소됩니다" and "<black>Fzem:^[wk639Ce-*"
+	set slot 6 of metadata tag "DEFMETA" of {_pl} to wooden sword named "<reset>서머너" with lore "&b본인이 소환한 골렘이 주는대미지가 2배 상승합니다" and "&b5라운드마다 골렘이 소환됩니다" and "<black>Fzem:^[wk639Ce-*"
+	set slot 8 of metadata tag "DEFMETA" of {_pl} to wooden sword named "<reset>암살자" with lore "&a우클릭으로 몬스터 주변으로 텔레포트합니다" and "&a텔레포트 하고 10초동안 몬스터로부터 공격타겟이 되지 않습니다" and "&b은신타이머가 0이되기전에 몬스터를 잡을시" and "&b은신타이머가 2초 추가로 더 받습니다" and "&c본인에 의한 모든 대미지가 2배 상승합니다" and "<black>Fzem:^[wk639Ce-*"
+	open (metadata tag "DEFMETA" of {_pl}) to {_pl}
+	set {defz::%{_pl}'s world%::playing::opening::%{_pl}%} to true
+
+function atkskill(pl: player):
+	set {defz::%{_pl}'s world%::playing::guiopened::%{_pl}%} to true
+	set metadata tag "DEFATKATTACKRATE" of {_pl} to chest inventory with 1 rows named "ATK/HP RATE"
+	set slot 1 of metadata tag "DEFATKATTACKRATE" of {_pl} to light blue stained glass pane named "<reset>&c1.75x" with lore "&b대미지 1.75배" and "&c체력 0.57배" and "<black>Fzem:^[wk639Ce-*"
+	set slot 2 of metadata tag "DEFATKATTACKRATE" of {_pl} to light blue stained glass pane named "<reset>&61.5x" with lore "&b대미지 1.5배" and "&c체력 0.67배" and "<black>Fzem:^[wk639Ce-*"
+	set slot 3 of metadata tag "DEFATKATTACKRATE" of {_pl} to light blue stained glass pane named "<reset>&e1.25x" with lore "&b대미지 1.25배" and "&c체력 0.8배" and "<black>Fzem:^[wk639Ce-*"
+	set slot 4 of metadata tag "DEFATKATTACKRATE" of {_pl} to light blue stained glass pane named "<reset>&a1x" with lore "&a대미지 그대로" and "&a체력 그대로" and "<black>Fzem:^[wk639Ce-*"
+	set slot 5 of metadata tag "DEFATKATTACKRATE" of {_pl} to light blue stained glass pane named "<reset>&70.8x" with lore "&b체력 1.25배" and "&c대미지 0.8배" and "<black>Fzem:^[wk639Ce-*"
+	set slot 6 of metadata tag "DEFATKATTACKRATE" of {_pl} to light blue stained glass pane named "<reset>&b0.67x" with lore "&b체력 1.5배" and "&c대미지 0.67배" and "<black>Fzem:^[wk639Ce-*"
+	set slot 7 of metadata tag "DEFATKATTACKRATE" of {_pl} to light blue stained glass pane named "<reset>&90.57x" with lore "&b체력 1.75배" and "&c대미지 0.57배" and "<black>Fzem:^[wk639Ce-*"
+	open (metadata tag "DEFATKATTACKRATE" of {_pl}) to {_pl}
+	set {defz::%{_pl}'s world%::playing::opening::%{_pl}%} to true
+
+on inventory click:
+	if event-inventory = (metadata tag "DEFATKATTACKRATE" of player):
+		if type of event-inventory is player inventory:
+			cancel event
+		else:
+			set {setting::defz::%player%::healthrate} to 10 + {prestige::defz::%player%::health}
+			set {_bh} to {defz::skill::atk::%player%}
+			if event-slot is 0:
+				set {defz::skill::atk::%player%} to 2
+			if event-slot is 1:
+				set {defz::skill::atk::%player%} to 1.75
+			if event-slot is 2:
+				set {defz::skill::atk::%player%} to 1.5
+			if event-slot is 3:
+				set {defz::skill::atk::%player%} to 1.25
+			if event-slot is 4:
+				set {defz::skill::atk::%player%} to 1
+			if event-slot is 5:
+				set {defz::skill::atk::%player%} to 1 / 1.25
+			if event-slot is 6:			
+				set {defz::skill::atk::%player%} to 1 / 1.5
+			if event-slot is 7:			
+				set {defz::skill::atk::%player%} to 1 / 1.75
+			if event-slot is 8:
+				set {defz::skill::atk::%player%} to 0.5
+			set {setting::defz::%player%::attackrate} to {defz::skill::atk::%player%}
+			message "&a배율을 %{defz::skill::atk::%player%}%x로 설정했습니다" to player
+			set {_nl} to {_bh} / {defz::skill::atk::%player%}
+			zsdebug("%player%", "Multiple Rate: %{_nl}%, %{setting::defz::%player%::maxhealth}% * %{_nl}% = %{setting::defz::%player%::maxhealth} * {_nl}%, %{setting::defz::%player%::health}% * %{_nl}% =  %{setting::defz::%player%::health} * {_nl}%")
+			set {setting::defz::%player%::maxhealth} to {setting::defz::%player%::maxhealth} * {_nl}
+			set {setting::defz::%player%::health} to {setting::defz::%player%::health} * {_nl}
+			set {_num} to {setting::defz::%player%::maxhealth} * {defz::skill::atk::%player%}
+			zsdebug("%player%", "&cYOUR HEALTH RATE: %{setting::defz::%player%::healthrate}%")
+			zsdebug("%player%", "&cMh * ATKRATE: %{setting::defz::%player%::maxhealth}% *% {defz::skill::atk::%player%}% = %{setting::defz::%player%::maxhealth} * {defz::skill::atk::%player%}%")
+			if {_num} is not {setting::defz::%player%::healthrate}:
+				zsdebug("%player%", "&cUnknown Error Detection")
+				set {_mul} to {setting::defz::%player%::healthrate} / {setting::defz::%player%::maxhealth}
+				set {setting::defz::%player%::maxhealth} to {setting::defz::%player%::maxhealth} * {_mul}
+				set {setting::defz::%player%::health} to {setting::defz::%player%::health} * {_mul}
+				set {_nl2} to 1 / {defz::skill::atk::%player%}
+				set {setting::defz::%player%::maxhealth} to {setting::defz::%player%::maxhealth} * {_nl2}
+				set {setting::defz::%player%::health} to {setting::defz::%player%::health} * {_nl2}
+
+			cancel event
+				
+
+on inventory click:
+	if event-slot's lore doesn't contain "Fzem:^[wk639Ce-*":
+		if {defz::%player's world%::playing::opening::%player%} is true:
+			if "%event-inventory%" is "inventory of %player's name%":
+				cancel event
+function seld(pl: player):
+	set {defz::%{_pl}'s world%::playing::guiopened::%{_pl}%} to true
+	set metadata tag "DEFSEL1" of {_pl} to chest inventory with 1 rows named "선택창"
+	set slot 2 of metadata tag "DEFSEL1" of {_pl} to book named "<reset>상점"
+	set slot 6 of metadata tag "DEFSEL1" of {_pl} to book named "<reset>프레스티지"
+	open (metadata tag "DEFSEL1" of {_pl}) to {_pl}
+
+on inventory click:
+	if event-inventory = (metadata tag "DEFSEL1" of player):
+		cancel event
+		if type of event-inventory is player inventory:
+			cancel event
+		else:
+			if event-slot is 2:
+				mainshop(player)
+			if event-slot is 6:
+				prestige(player)
+
+on inventory close:
+	clear {defz::%player's world%::playing::opening::%player%}
+
+on inventory click:
+	if event-inventory = (metadata tag "DEFMETA" of player):
+		if type of event-inventory is player inventory:
+			cancel event
+		else:
+			if event-slot is 0:
+				set {defz::%player's world%::skill::setting::%player%} to "atk"
+				message "<light green>어태커로 설정했습니다"
+				close player's inventory
+				close player's inventory
+			if event-slot is 2:
+				set {defz::%player's world%::skill::setting::%player%} to "hp"
+				message "<light green>힐러로 설정했습니다"
+				close player's inventory
+			if event-slot is 4:
+				set {defz::%player's world%::skill::setting::%player%} to "meta1"
+				message "<light green>마법사로 설정했습니다"
+				close player's inventory
+			if event-slot is 6:
+				set {defz::%player's world%::skill::setting::%player%} to "meta2"
+				message "<light green>서머너로 설정했습니다"
+				close player's inventory
+			if event-slot is 8:
+				set {defz::%player's world%::skill::setting::%player%} to "kill"
+				message "<light green>암살자로 설정했습니다"
+				close player's inventory
+function mainshop(pl: player):
+	set {defz::%{_pl}'s world%::playing::guiopened::%{_pl}%} to true
+	loop all items in {_pl}'s inventory:
+		if loop-item is arrow:
+			set {_amount} to number of loop-item in {_pl}'s inventory
+			add {_amount} to {_a::%{_pl}%}
+	wait 3 ticks
+	set metadata tag "DEFMAIN" of {_pl} to chest inventory with 2 rows named "메인"
+	if {defz::upgrade::weapon::%{_pl}%} is not set:
+		set slot 0 of metadata tag "DEFMAIN" of {_pl} to wooden sword named "<reset><brown>나무검으로 업그레이드" with lore "<reset><light blue>나무검으로 업그레이드 합니다" and "<reset><gold>%30*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::weapon::%{_pl}%} is 1:
+		set slot 0 of metadata tag "DEFMAIN" of {_pl} to golden sword named "<reset><gold>금검으로 업그레이드" with lore "<reset><light blue>금검으로 업그레이드 합니다" and "<reset><gold>%50*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::weapon::%{_pl}%} is 2:
+		set slot 0 of metadata tag "DEFMAIN" of {_pl} to stone sword named "<reset><dark gray>돌검으로 업그레이드" with lore "<reset><light blue>돌검으로 업그레이드 합니다" and "<reset><gold>%90*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::weapon::%{_pl}%} is 3:
+		set slot 0 of metadata tag "DEFMAIN" of {_pl} to iron sword named "<reset><gray>철검으로 업그레이드" with lore "<reset><light blue>철검으로 업그레이드 합니다" and "<reset><gold>%170*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::weapon::%{_pl}%} is 4:
+		set slot 0 of metadata tag "DEFMAIN" of {_pl} to diamond sword named "<reset><light blue>다이아몬드검으로 업그레이드" with lore "<reset><light blue>다이아몬드검으로 업그레이드 합니다" and "<reset><gold>%330*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::weapon::%{_pl}%} is 5:
+		set slot 0 of metadata tag "DEFMAIN" of {_pl} to netherite sword named "<reset><dark gray>네더라이트검으로 업그레이드" with lore "<reset><dark gray>네더라이트검으로 업그레이드 합니다" and "<reset><gold>%390*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::weapon::%{_pl}%} is 6:
+		set slot 0 of metadata tag "DEFMAIN" of {_pl} to barrier named "<reset><light red>최대강화됨!" with lore "<reset><light blue>당신은 이미 최대강화상태입니다!" and "<reset><gold>0코인" and "<black>Fzem:^[wk639Ce-*"
+	if {defz::upgrade::armor::%{_pl}%} is not set:
+		set slot 2 of metadata tag "DEFMAIN" of {_pl} to leather helmet named "<reset><brown>가죽갑옷으로 업그레이드" with lore "<reset><light blue>가죽갑옷으로 업그레이드 합니다" and "<reset><gold>%30*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::armor::%{_pl}%} is 1:
+		set slot 2 of metadata tag "DEFMAIN" of {_pl} to golden helmet named "<reset><gold>금갑옷으로 업그레이드" with lore "<reset><light blue>금갑옷으로 업그레이드 합니다" and "<reset><gold>%50*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::armor::%{_pl}%} is 2:
+		set slot 2 of metadata tag "DEFMAIN" of {_pl} to chainmail helmet named "<reset><dark gray>사슬갑옷으로 업그레이드" with lore "<reset><light blue>사슬갑옷으로 업그레이드 합니다" and "<reset><gold>%90*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::armor::%{_pl}%} is 3:
+		set slot 2 of metadata tag "DEFMAIN" of {_pl} to iron helmet named "<reset><gray>철갑옷으로 업그레이드" with lore "<reset><light blue>철갑옷으로 업그레이드 합니다" and "<reset><gold>%170*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::armor::%{_pl}%} is 4:
+		set slot 2 of metadata tag "DEFMAIN" of {_pl} to diamond helmet named "<reset><light blue>다이아몬드갑옷으로 업그레이드" with lore "<reset><light blue>다이아몬드갑옷으로 업그레이드 합니다" and "<reset><gold>%330*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::armor::%{_pl}%} is 5:
+		set slot 2 of metadata tag "DEFMAIN" of {_pl} to netherite helmet named "<reset><dark gray>네더라이트갑옷으로 업그레이드" with lore "<reset><dark gray>네더라이트갑옷으로 업그레이드 합니다" and "<reset><gold>%390*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	else if {defz::upgrade::armor::%{_pl}%} is 6:
+		set slot 2 of metadata tag "DEFMAIN" of {_pl} to barrier named "<reset><light red>최대강화됨!" with lore "<reset><light blue>당신은 이미 최대강화상태입니다!" and "<reset><gold>0코인" and "<black>Fzem:^[wk639Ce-*"
+	if {_pl} has bow:
+		set slot 4 of metadata tag "DEFMAIN" of {_pl} to arrow named "<reset><magenta>화살" with lore "<reset><light blue>화살x16개" and "<reset><gold>50코인"
+	else:
+		set slot 4 of metadata tag "DEFMAIN" of {_pl} to bow named "<reset><magenta>활과 화살" with lore "<reset><light blue>활, 화살x16개" and "<reset><gold>%150*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	set slot 6 of metadata tag "DEFMAIN" of {_pl} to cooked beef named "<reset><magenta>음식" with lore "<reset><light blue>소고기x16개" and "<reset><gold>%50*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	set slot 8 of metadata tag "DEFMAIN" of {_pl} to golden apple named "<reset><magenta>황금사과" with lore "<reset><light blue>황금사과x1" and "<reset><gold>%40*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	set slot 9 of metadata tag "DEFMAIN" of {_pl} to book named "<reset><magenta>검 인첸트 강화" with lore "<reset><light blue>힘을 강화합니다" and "<reset><gold>%200*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	set slot 11 of metadata tag "DEFMAIN" of {_pl} to book named "<reset><magenta>갑옷 인첸트 강화" with lore "<reset><light blue>보호을 강화합니다" and "<reset><gold>%(150+ 75 * {defz::upgrade::armorupgrade::%{_pl}%})*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	set slot 13 of metadata tag "DEFMAIN" of {_pl} to book named "<reset><magenta>활 인첸트 강화" with lore "<reset><light blue>힘을 강화합니다" and "<reset><gold>%(350)*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	set slot 15 of metadata tag "DEFMAIN" of {_pl} to wolf spawn egg named "<reset><magenta>골렘스폰알" with lore "<reset><light blue>골렘스폰알" and "<reset><gold>%500*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+	open (metadata tag "DEFMAIN" of {_pl}) to {_pl}
+	set {defz::%{_pl}'s world%::playing::opening::%{_pl}%} to true
+
+on inventory click:
+	if event-inventory = (metadata tag "DEFMAIN" of player):
+		if event-inventory != inventory of player:
+			cancel event
+			if event-slot is 0:
+				if {defz::upgrade::weapon::%player%} is not set:
+					shop(player, 2)
+				else if {defz::upgrade::weapon::%player%} < 7:
+					shop(player, 2)
+				else:
+					close player's inventory
+			if event-slot is 2:
+				if {defz::upgrade::armor::%player%} is not set:
+					shop(player, 1)
+				else if {defz::upgrade::armor::%player%} < 7:
+					shop(player, 1)
+				else:
+					close player's inventory
+			if event-slot is 4:
+				shop(player, 3)
+			if event-slot is 6:
+				shop(player, 4)
+			if event-slot is 8:
+				shop(player, 5)
+			if event-slot is 9:
+				upgrade(player, 2)
+			if event-slot is 11:
+				upgrade(player, 3)
+			if event-slot is 13:
+				upgrade(player, 1)
+			if event-slot is 15:
+				shop(player, 9)	
+		else:
+			cancel event
+	
+
+function prestige(pl: player):
+	set {defz::%{_pl}'s world%::playing::guiopened::%{_pl}%} to true
+	wait 3 ticks
+	set metadata tag "DEFPRESTIGE" of {_pl} to chest inventory with 4 rows named "&a프레스티지"
+	if {prestige::defz::%{_pl}%::attackdamage} is not set:
+		set {prestige::defz::%{_pl}%::attackdamage} to 0
+	if {prestige::defz::%{_pl}%::coin} is not set:
+		set {prestige::defz::%{_pl}%::coin} to 0
+	if {prestige::defz::%{_pl}%::health} is not set:
+		set {prestige::defz::%{_pl}%::health} to 0
+	if {prestige::defz::%{_pl}%::defend} is not set:
+		set {prestige::defz::%{_pl}%::defend} to 0
+	if {prestige::defz::%{_pl}%::sale} is not set:
+		set {prestige::defz::%{_pl}%::sale} to 0
+	if {prestige::defz::%{_pl}%::atkgolem} is not set:
+		set {prestige::defz::%{_pl}%::atkgolem} to 0
+	if {prestige::defz::%{_pl}%::exp} is not set:
+		set {prestige::defz::%{_pl}%::exp} to 0
+	if {prestige::defz::%{_pl}%::skillup} is not set:
+		set {prestige::defz::%{_pl}%::skillup} to 0
+		
+	set slot 0 of metadata tag "DEFPRESTIGE" of {_pl} to diamond sword named "<reset><light red>대미지 1%% 증가" with lore "<black>Fzem:^[wk639Ce-*"
+	set slot 2 of metadata tag "DEFPRESTIGE" of {_pl} to diamond sword named "<reset><gold>코인 5%% 증가" with lore "<black>Fzem:^[wk639Ce-*"
+	set slot 4 of metadata tag "DEFPRESTIGE" of {_pl} to diamond sword named "<reset><magenta>HP 1 증가" with lore "<black>Fzem:^[wk639Ce-*"
+	set slot 6 of metadata tag "DEFPRESTIGE" of {_pl} to diamond sword named "<reset><light blue>최종방어력 0.5%% 증가" with lore "<black>Fzem:^[wk639Ce-*"
+	set slot 18 of metadata tag "DEFPRESTIGE" of {_pl} to diamond sword named "<reset><gold>상점가 1%% 감소" with lore "<black>Fzem:^[wk639Ce-*"
+	set slot 20 of metadata tag "DEFPRESTIGE" of {_pl} to diamond sword named "<reset><light red>골렘공격력 10%% 증가" with lore "<black>Fzem:^[wk639Ce-*"
+	set slot 22 of metadata tag "DEFPRESTIGE" of {_pl} to diamond sword named "<reset><light green>받는경험치 10%% 증가" with lore "<black>Fzem:^[wk639Ce-*"
+	open (metadata tag "DEFPRESTIGE" of {_pl}) to {_pl}
+	set {defz::%{_pl}'s world%::playing::opening::%{_pl}%} to true
+	preset({_pl})
+function preset(pl: player):
+	set slot 9 of metadata tag "DEFPRESTIGE" of {_pl} to paper named "<reset>[공격력증가]" with lore "&r&aLV: %{prestige::defz::%{_pl}%::attackdamage}%" and "&r&a수치: %{prestige::defz::%{_pl}%::attackdamage}%%%" and "<black>Fzem:^[wk639Ce-*"
+	set slot 11 of metadata tag "DEFPRESTIGE" of {_pl} to paper named "<reset>[코인증가]" with lore "&r&aLV: %{prestige::defz::%{_pl}%::coin} / 0.5%" and "&r&a수치: %{prestige::defz::%{_pl}%::coin}%%%" and "<black>Fzem:^[wk639Ce-*"
+	set slot 13 of metadata tag "DEFPRESTIGE" of {_pl} to paper named "<reset>[체력증가]" with lore "&r&aLV: %{prestige::defz::%{_pl}%::health} / 0.5%" and "&r&a수치: %2 * {setting::defz::%{_pl}%::maxhealth}%" and "<black>Fzem:^[wk639Ce-*"
+	set slot 15 of metadata tag "DEFPRESTIGE" of {_pl} to paper named "<reset>[방어력증가]" with lore "&r&aLV: %{prestige::defz::%{_pl}%::defend} / 5%" and "&r&a수치: %{prestige::defz::%{_pl}%::defend}%" and "<black>Fzem:^[wk639Ce-*"
+	set slot 17 of metadata tag "DEFPRESTIGE" of {_pl} to paper named "<reset>[prestige]" with lore "&r&a남은 프레스티지: %{prestige::defz::%{_pl}%::selector}%" and "<black>Fzem:^[wk639Ce-*"
+	set slot 27 of metadata tag "DEFPRESTIGE" of {_pl} to paper named "<reset>[상점가감소]" with lore "&r&aLV: %{prestige::defz::%{_pl}%::sale} / 0.01%" and "&r&a수치: %100 * {prestige::defz::%{_pl}%::sale}%%%" and "<black>Fzem:^[wk639Ce-*"
+	set slot 29 of metadata tag "DEFPRESTIGE" of {_pl} to paper named "<reset>[골렘공격력증가]" with lore "&r&aLV: %{prestige::defz::%{_pl}%::atkgolem} / 0.1%" and "&r&a수치: %{prestige::defz::%{_pl}%::atkgolem}%%%" and "<black>Fzem:^[wk639Ce-*"
+	set slot 31 of metadata tag "DEFPRESTIGE" of {_pl} to paper named "<reset>[받는경험치증가]" with lore "&r&aLV: %{prestige::defz::%{_pl}%::exp} / 0.1%" and "&r&a수치: %{prestige::defz::%{_pl}%::exp}%%%" and "<black>Fzem:^[wk639Ce-*"
+	#set slot 33 of metadata tag "DEFPRESTIGE" of {_pl} to paper named "<reset>[스킬강화]" with lore "&r&aLV: %{prestige::defz::%{_pl}%::skillup} / 10%" and "&r&a수치: %{prestige::defz::%{_pl}%::skillup}%%%" and "<black>Fzem:^[wk639Ce-*"
+on inventory click:
+	type of event-inventory is set
+	if event-inventory = (metadata tag "DEFPRESTIGE" of player):
+		cancel event
+		if {prestige::defz::%player%::selector} >= 1:
+			if event-slot = 0:
+				add 1 to {prestige::defz::%player%::attackdamage}
+				message "<light green>구매에 성공했습니다"
+				subtract 1 from {prestige::defz::%player%::selector}
+				preset(player)
+			if event-slot = 2:
+				add 0.5 to {prestige::defz::%player%::coin}
+				message "<light green>구매에 성공했습니다"
+				subtract 1 from {prestige::defz::%player%::selector}
+				preset(player)
+			if event-slot = 4:
+				add 0.5 to {prestige::defz::%player%::health}
+				message "<light green>구매에 성공했습니다"
+				set {_health} to 10 + {prestige::defz::%player%::health}
+				subtract 1 from {prestige::defz::%player%::selector}
+				if {defz::%player's world%::skill::setting::%player%} is "atk":
+					zsdebug("%player%", "&cSETTING")
+					set {_mul} to {_health} / {setting::defz::%player%::maxhealth}
+					set {setting::defz::%player%::maxhealth} to {setting::defz::%player%::maxhealth} * {_mul}
+					set {setting::defz::%player%::health} to {setting::defz::%player%::health} * {_mul}
+					set {_nl2} to 1 / {defz::skill::atk::%player%}
+					set {setting::defz::%player%::maxhealth} to {setting::defz::%player%::maxhealth} * {_nl2}
+					set {setting::defz::%player%::health} to {setting::defz::%player%::health} * {_nl2}
+					zsdebug("%player%", "&cYOUR HEALTH RATE: %{setting::defz::%player%::healthrate}%")
+					zsdebug("%player%", "&cMh * ATKRATE: %{setting::defz::%player%::maxhealth}% *% {defz::skill::atk::%player%}% = %{setting::defz::%player%::maxhealth} * {defz::skill::atk::%player%}%")
+				else:
+					set {setting::defz::%player%::maxhealth} to {_health}
+				preset(player)
+			if event-slot = 6:
+				if {prestige::defz::%player%::defend} is not set:
+					set {prestige::defz::%player%::defend} to 0
+				if {prestige::defz::%player%::defend} < 50:
+					add 5 to {prestige::defz::%player%::defend}
+					message "<light green>구매에 성공했습니다"
+					subtract 1 from {prestige::defz::%player%::selector}
+					preset(player)
+				else:
+					message "&c최대강화입니다!"
+			if event-slot = 18:
+				if {prestige::defz::%player%::sale} is not set:
+					set {prestige::defz::%player%::sale} to 0
+				if {prestige::defz::%player%::sale} / 0.01 < 99:
+					add 0.01 to {prestige::defz::%player%::sale}
+					message "<light green>구매에 성공했습니다"
+					subtract 1 from {prestige::defz::%player%::selector}
+					preset(player)
+				else:
+					message "&c최대강화입니다!"
+			if event-slot = 20:
+				add 0.1 to {prestige::defz::%player%::atkgolem}
+				message "<light green>구매에 성공했습니다"
+				subtract 1 from {prestige::defz::%player%::selector}
+				preset(player)
+			if event-slot = 22:
+				add 0.1 to {prestige::defz::%player%::exp}
+				message "<light green>구매에 성공했습니다"
+				subtract 1 from {prestige::defz::%player%::selector}
+				preset(player)
+			if event-slot = 24:
+				if {prestige::defz::%player%::skillup} is not set:
+					set {prestige::defz::%player%::skillup} to 0
+				if {prestige::defz::%player%::skillup} < 10:
+					add 10 to {prestige::defz::%player%::skillup}
+					message "<light green>구매에 성공했습니다"
+					subtract 1 from {prestige::defz::%player%::selector}
+					preset(player)
+				else:
+					message "&c최대강화입니다!"
+		else:
+			message "&c남은 프레스티지가 없습니다"
+			
+			
+
+function cmod(int1: integer, int2: integer) :: integer:
+	set {_i1} to {_int1}
+	set {_i2} to {_int2}
+	while {_i1} >= {_i2}:
+		subtract {_i2} from {_i1}
+	return {_i1}

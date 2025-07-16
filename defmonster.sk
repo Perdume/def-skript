@@ -1,0 +1,551 @@
+function chy(en: text, map: text):
+	while {_setLoc} is not set:
+		set {_POSITION::RANDOM} to location at (random integer between -36 and 22, 4, random integer between -5 and 52) in world "%{_map}%" parsed as world
+		loop blocks above {_POSITION::RANDOM}:
+			if loop-block and block above loop-block are air:
+				if block under loop-block is not air or water or lava or void air:
+					if loop-block's y-coordinate < 20.5:
+						set {_POSITION::RANDOM} to location of loop-block
+						set {_en} to {_en} parsed as entity type
+						spawn {_en} at location at {_POSITION::RANDOM}
+						if {defz::playing::ordealcount::4} is true:
+							set last spawned entity's max health to ((({defz::%{_map}%::playing::round})^2)/2.25 + 20) * 3 * (1 - (2/3)^{defz::%{_map}%::playing::number::player})
+						else:
+							set last spawned entity's max health to ((({defz::%{_map}%::playing::round})^2)/2.25 + 20) * 3 * (1 - (2/3)^{defz::%{_map}%::playing::number::player}) * 11/10
+						set last spawned entity's health to last spawned entity's max health
+						set {_setLoc} to true
+						exit 1 loop
+					else:
+						exit 1 loop
+
+function encentity(en: entity):
+	set {_b} to {defz::%{_map}%::playing::round} * 5 / 12
+	set {_a} to {defz::%{_map}%::playing::round}
+	set {_num} to ceil({_a})
+	set {_num2} to ceil({_b})
+	enchant {_en}'s helmet with "protection %{_num2}%" parsed as enchantment type
+	enchant {_en}'s chestplate with "protection %{_num2}%" parsed as enchantment type
+	enchant {_en}'s leggings with "protection %{_num2}%" parsed as enchantment type
+	enchant {_en}'s boots with "protection %{_num2}%" parsed as enchantment type
+	if {_en}'s tool is a axe:
+		enchant {_en}'s tool with "sharpness %{_num}%" parsed as enchantment type
+	if {_en}'s tool is a bow:
+		enchant {_en}'s tool with "power %{_num2}%" parsed as enchantment type
+
+function z0(map: text):
+	chy("zombie", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	encentity(last spawned entity)
+function z1(map: text):
+	chy("zombie", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	set last spawned entity's helmet to leather helmet
+	set last spawned entity's chestplate to leather chestplate
+	set last spawned entity's leggings to leather leggings
+	set last spawned entity's boots to leather boots
+	set last spawned entity's held item to wooden axe
+	encentity(last spawned entity)
+function z2(map: text):
+	chy("zombie", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	set last spawned entity's helmet to golden helmet
+	set last spawned entity's chestplate to golden chestplate
+	set last spawned entity's leggings to golden leggings
+	set last spawned entity's boots to golden boots
+	set last spawned entity's held item to golden axe
+	encentity(last spawned entity)
+function z3(map: text):
+	chy("zombie", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	set last spawned entity's helmet to chainmail helmet
+	set last spawned entity's chestplate to chainmail chestplate
+	set last spawned entity's leggings to chainmail leggings
+	set last spawned entity's boots to chainmail boots
+	set last spawned entity's held item to stone axe of Sharpness 1
+	encentity(last spawned entity)
+function z4(map: text):
+	chy("zombie", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	set last spawned entity's helmet to iron helmet
+	set last spawned entity's chestplate to iron chestplate
+	set last spawned entity's leggings to iron leggings
+	set last spawned entity's boots to iron boots
+	set last spawned entity's held item to iron axe of Sharpness 1
+	encentity(last spawned entity)
+function z5(map: text):
+	chy("zombie", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	set last spawned entity's helmet to diamond helmet
+	set last spawned entity's chestplate to diamond chestplate
+	set last spawned entity's leggings to diamond leggings
+	set last spawned entity's boots to diamond boots
+	set last spawned entity's held item to diamond axe of Sharpness 1
+	encentity(last spawned entity)
+
+function sk1(map: text):
+	chy("skeleton", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "스켈레톤"
+	set last spawned entity's held item to bow
+	encentity(last spawned entity)
+function sk2(map: text):
+	chy("skeleton", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "스켈레톤"
+	set last spawned entity's helmet to leather helmet
+	set last spawned entity's chestplate to leather chestplate
+	set last spawned entity's leggings to leather leggings
+	set last spawned entity's boots to leather boots
+	set last spawned entity's held item to bow
+	encentity(last spawned entity)
+function sk3(map: text):
+	chy("skeleton", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "스켈레톤"
+	set last spawned entity's helmet to chainmail helmet
+	set last spawned entity's chestplate to chainmail chestplate
+	set last spawned entity's leggings to chainmail leggings
+	set last spawned entity's boots to chainmail boots
+	set last spawned entity's held item to bow
+	encentity(last spawned entity)
+function sk4(map: text):
+	chy("skeleton", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "스켈레톤"
+	set last spawned entity's helmet to golden helmet
+	set last spawned entity's chestplate to golden chestplate
+	set last spawned entity's leggings to golden leggings
+	set last spawned entity's boots to golden boots
+	set last spawned entity's held item to bow
+	encentity(last spawned entity)
+function sk5(map: text):
+	chy("skeleton", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "스켈레톤"
+	set last spawned entity's helmet to netherite helmet
+	set last spawned entity's chestplate to netherite chestplate
+	set last spawned entity's leggings to netherite leggings
+	set last spawned entity's boots to netherite boots
+	set last spawned entity's held item to bow
+	encentity(last spawned entity)
+function sp1(map: text):
+	chy("spider", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "거미"
+	apply potion of speed of tier 1 to spawned entity for 9999 days
+	encentity(last spawned entity)
+function sp2(map: text):
+	chy("cave spider", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "거미"
+	apply potion of speed of tier 1 to spawned entity for 9999 days
+	encentity(last spawned entity)
+function cr1(map: text):
+	chy("creeper", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "크리퍼"
+	encentity(last spawned entity)
+function cr2(map: text):
+	chy("powered creeper", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "크리퍼"
+	encentity(last spawned entity)
+function wi1(map: text):
+	chy("witch", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "마녀"
+	encentity(last spawned entity)
+function pi1(map: text):
+	chy("pillager", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "약탈자"
+	encentity(last spawned entity)
+
+function hu1(map: text):
+	chy("husk", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	set last spawned entity's helmet to diamond helmet
+	set last spawned entity's chestplate to diamond chestplate
+	set last spawned entity's leggings to diamond leggings
+	set last spawned entity's boots to diamond boots
+	set last spawned entity's held item to diamond sword of Sharpness 1
+	encentity(last spawned entity)
+function vin1(map: text):
+	chy("vindicator", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	set last spawned entity's helmet to diamond helmet
+	set last spawned entity's chestplate to diamond chestplate
+	set last spawned entity's leggings to diamond leggings
+	set last spawned entity's boots to diamond boots
+	set last spawned entity's held item to diamond sword of Sharpness 1
+	encentity(last spawned entity)
+
+function dr1(map: text):
+	chy("drowned", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "스켈레톤"
+	set last spawned entity's helmet to diamond helmet
+	set last spawned entity's chestplate to diamond chestplate
+	set last spawned entity's leggings to diamond leggings
+	set last spawned entity's boots to diamond boots
+	set last spawned entity's held item to trident
+	encentity(last spawned entity)
+
+function zpigl1(map: text):
+	chy("zombified piglin", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	set last spawned entity's helmet to netherite helmet
+	set last spawned entity's chestplate to netherite chestplate
+	set last spawned entity's leggings to netherite leggings
+	set last spawned entity's boots to netherite boots
+	set last spawned entity's held item to netherite axe
+	encentity(last spawned entity)
+
+function zpigl2(map: text):
+	chy("zombified piglin", {_map})
+	set {_a} to "protection %{defz::%{_map}%::playing::round}%" parsed as enchantment type
+	set {defz::type::%last spawned entity's uuid%} to "좀비"
+	set last spawned entity's helmet to netherite helmet
+	set last spawned entity's chestplate to netherite chestplate
+	set last spawned entity's leggings to netherite leggings
+	set last spawned entity's boots to netherite boots
+	set last spawned entity's held item to netherite axe
+	encentity(last spawned entity)
+
+
+function st1(map: text):
+	chy("stray", {_map})
+	set {defz::type::%last spawned entity's uuid%} to "스켈레톤"
+	set last spawned entity's helmet to diamond helmet
+	set last spawned entity's chestplate to diamond chestplate
+	set last spawned entity's leggings to diamond leggings
+	set last spawned entity's boots to diamond boots
+	set last spawned entity's held item to bow of Power 2
+	encentity(last spawned entity)
+
+function zdspawn(a: integer, b: integer, c: integer, d: integer, e: integer, f: integer, map: text):
+	set {zdspawn.ok} to true
+	if {defz::%{_map}%::playing::round} <= 5:
+		loop {_a} times:
+			z0({_map})
+		loop {_b} times:
+			sk1({_map})
+		loop {_c} times:
+			sp1({_map})
+		loop {_d} times:
+			cr1({_map})
+	if {defz::%{_map}%::playing::round} > 5:
+		if {defz::%{_map}%::playing::round} <= 9:
+			loop {_a} times:
+				z2({_map})
+			loop {_b} times:
+				sk2({_map})
+			loop {_c} times:
+				sp1({_map})
+			loop {_d} times:
+				cr1({_map})
+			loop {_e} times:
+				wi1({_map})
+			loop {_f} times:
+				pi1({_map})
+	if {defz::%{_map}%::playing::round} = 10:
+		loop 2 times:
+			chy("blaze", {_map})
+			set last spawned entity's max health to 500 * 3 * (1 - (2/3)^{defz::%{_map}%::playing::number::player})
+			set last spawned entity's health to last spawned entity's max health
+			set the last spawned entity's display name to "%last spawned entity's health * 2%&c<bold>♡, <reset>&c[%last spawned entity's health/last spawned entity's max health * 100%%%]"
+			set {BOSS::%last spawned entity%} to true
+		bossmission({_map})
+	if {defz::%{_map}%::playing::round} > 10:
+		if {defz::%{_map}%::playing::round} <= 15:
+			loop {_a} times:
+				z4({_map})
+			loop {_b} times:
+				sk3({_map})
+			loop {_c} times:
+				sp2({_map})
+			loop {_d} times:
+				cr1({_map})
+			loop {_e} times:
+				wi1({_map})
+			loop {_f} times:
+				pi1({_map})
+	if {defz::%{_map}%::playing::round} > 15:
+		if {defz::%{_map}%::playing::round} < 20:
+			loop {_a} times:
+				hu1({_map})
+			loop {_b} times:
+				dr1({_map})
+			loop {_c} times:
+				sp2({_map})
+			loop {_d} times:
+				cr2({_map})
+			loop {_e} times:
+				wi1({_map})
+			loop {_f} times:
+				pi1({_map})
+	if {defz::%{_map}%::playing::round} = 20:
+		loop {defz::%{_map}%::playing::number::player} + 1 times:
+			chy("evoker", {_map})
+			set last spawned entity's max health to 1
+			set last spawned entity's helmet to diamond helmet
+			set last spawned entity's chestplate to diamond chestplate
+			set last spawned entity's leggings to diamond leggings
+			set last spawned entity's boots to diamond boots
+			set last spawned entity's max health to 5000 * 3 * (1 - (2/3)^{defz::%{_map}%::playing::number::player})
+			set last spawned entity's health to last spawned entity's max health
+			set the last spawned entity's display name to "%last spawned entity's health * 2%&c<bold>♡, <reset>&c[%last spawned entity's health/last spawned entity's max health * 100%%%]"
+			set {BOSS::%last spawned entity%} to true
+		bossmission({_map})
+	if {defz::%{_map}%::playing::round} > 20:
+		if {defz::%{_map}%::playing::round} <= 25:
+			loop {_a} times:
+				vin1({_map})
+			loop {_b} times:
+				st1({_map})
+			loop {_c} times:
+				sp2({_map})
+			loop {_d} times:
+				cr2({_map})
+			loop {_e} times:
+				wi1({_map})
+			loop {_f} times:
+				pi1({_map})
+	if {defz::%{_map}%::playing::round} > 25:
+		if {defz::%{_map}%::playing::round} <= 29:
+			loop {_a} times:
+				zpigl1({_map})
+			loop {_b} times:
+				sk5({_map})
+			loop {_c} times:
+				sp2({_map})
+			loop {_d} times:
+				cr2({_map})
+			loop {_e} times:
+				wi1({_map})
+			loop {_f} times:
+				pi1({_map})
+	if {defz::%{_map}%::playing::round} = 30:
+		loop {defz::%{_map}%::playing::number::player} + 1 times:
+			chy("ravager", {_map})
+			set last spawned entity's max health to 3000 * 3 * (1 - (2/3)^{defz::%{_map}%::playing::number::player})
+			set last spawned entity's health to last spawned entity's max health
+			set the last spawned entity's display name to "%last spawned entity's health * 2%&c<bold>♡, <reset>&c[%last spawned entity's health/last spawned entity's max health * 100%%%]"
+			set {BOSS::%last spawned entity%} to true
+		bossmission({_map})
+
+on spawn:
+	if "%event-entity%" = "vex":
+		set {_map} to "%event-entity's world%"
+		cancel event
+		chance of 50%:
+			chy("zombie", {_map})
+			set {defz::type::%last spawned entity's uuid%} to "&cALPHA"
+			set last spawned entity's helmet to netherite helmet of protection 1
+			set last spawned entity's chestplate to netherite chestplate of protection 1
+			set last spawned entity's leggings to netherite leggings of protection 1
+			set last spawned entity's boots to netherite boots of protection 1
+			set last spawned entity's held item to diamond axe of Sharpness 20
+			set last spawned entity's max health to 50
+			set last spawned entity's health to last spawned entity's max health
+		else:
+			chy("Skeleton", {_map})
+			set {defz::type::%last spawned entity's uuid%} to "&cBETA"
+			set last spawned entity's helmet to diamond helmet
+			set last spawned entity's chestplate to diamond chestplate
+			set last spawned entity's leggings to diamond leggings
+			set last spawned entity's boots to diamond boots
+			set last spawned entity's held item to bow of Power 20
+			set last spawned entity's max health to 50
+			set last spawned entity's health to last spawned entity's max health
+		loop all players:
+			if {defz::%loop-player's world%::playing::playing} is true:
+				add loop-player to {_pl::*}
+		set {_s} to size of {_pl::*}
+		set {_b} to random integer between 1 and {_s}
+		set last spawned entity's target to {_pl::%{_b}%}
+
+every 3 seconds:
+	loop all entities:
+		{defz::%loop-entity's world%::playing::playing} is true
+		if {BOSS.%loop-entity%} is true:
+			loop all entities:
+				loop-entity-1's world = loop-entity-2's world
+				if {BOSS.%loop-entity-2%} is not true:
+					if {BOSS.%loop-entity-1%} is true:
+						if loop-entity-1's target is not set:
+							if loop-entity-2's gamemode is not creative:
+								if {defz::playing::spect::%loop-entity-2%} is not set:
+									set loop-entity-1's target to loop-entity-2			
+								
+on damage:
+	if attacker is not set:
+		if {BOSS.%victim%} is set:
+			cancel event
+	if attacker is TNT:
+		if {BOSS.%victim%} is set:
+			cancel event
+
+function zdlevel(map: text):
+	clear {defz::%{_map}%::rancount}
+	if {defz::%{_map}%::playing::round} <= 10:
+		chance of 10%:
+			add 3 to {defz::%{_map}%::rancount}
+		else:
+			add 2 to {defz::%{_map}%::rancount}
+	else:
+		chance of 5%:
+			add 4 to {defz::%{_map}%::rancount}
+		else:
+			chance of 30%:
+				add 3 to {defz::%{_map}%::rancount}
+			else:
+				add 2 to {defz::%{_map}%::rancount}
+	if {defz::%{_map}%::rancount} is not set:
+		if {defz::%{_map}%::playing::round} <= 10:
+			chance of 10%:
+				add 3 to {defz::%{_map}%::rancount}
+			else:
+				add 2 to {defz::%{_map}%::rancount}
+		else:
+			chance of 5%:
+				add 4 to {defz::%{_map}%::rancount}
+			else:
+				chance of 30%:
+					add 3 to {defz::%{_map}%::rancount}
+				else:
+					add 2 to {defz::%{_map}%::rancount}
+	loop {defz::%{_map}%::rancount} times:
+		chance of 40%:
+			add 1 to {defz::%{_map}%::playing::count::zombie}
+		else:
+			chance of 50%:
+				add 1 to {defz::%{_map}%::playing::count::skeleton}
+			else:
+				chance of 60%:
+					add 1 to {defz::%{_map}%::playing::count::spider}
+				else:		
+					add 1 to {defz::%{_map}%::playing::count::creeper}
+	if {defz::%{_map}%::playing::round} > 20:
+		loop {defz::%{_map}%::rancount} times:
+			chance of 30%:
+				add 1 to {defz::%{_map}%::playing::count::zombie}
+			else:
+				chance of 40%:
+					add 1 to {defz::%{_map}%::playing::count::skeleton}
+				else:
+					chance of 40%:
+						add 1 to {defz::%{_map}%::playing::count::spider}
+					else:
+						chance of 30%:			
+							add 1 to {defz::%{_map}%::playing::count::creeper}
+						else:
+							chance of 40%:
+								add 1 to {defz::%{_map}%::playing::count::witch}
+							else:
+								add 1 to {defz::%{_map}%::playing::count::pillager}
+	if {defz::%{_map}%::playing::count::zombie} is not set:
+		set {defz::%{_map}%::playing::count::zombie} to 0
+	if {defz::%{_map}%::playing::count::skeleton} is not set:
+		set {defz::%{_map}%::playing::count::skeleton} to 0
+	if {defz::%{_map}%::playing::count::spider} is not set:
+		set {defz::%{_map}%::playing::count::spider} to 0
+	if {defz::%{_map}%::playing::count::creeper} is not set:
+		set {defz::%{_map}%::playing::count::creeper} to 0
+	if {defz::%{_map}%::playing::count::witch} is not set:
+		set {defz::%{_map}%::playing::count::witch} to 0
+	if {defz::%{_map}%::playing::count::pillager} is not set:
+		set {defz::%{_map}%::playing::count::pillager} to 0
+	wait 2 ticks
+	zdspawn({defz::%{_map}%::playing::count::zombie}, {defz::%{_map}%::playing::count::skeleton}, {defz::%{_map}%::playing::count::spider}, {defz::%{_map}%::playing::count::creeper}, {defz::%{_map}%::playing::count::witch}, {defz::%{_map}%::playing::count::pillager}, {_map})
+	wait 3 ticks
+	if {zdspawn.ok} is not set:
+		zdspawn({defz::%{_map}%::playing::count::zombie}, {defz::%{_map}%::playing::count::skeleton}, {defz::%{_map}%::playing::count::spider}, {defz::%{_map}%::playing::count::creeper}, {defz::%{_map}%::playing::count::witch}, {defz::%{_map}%::playing::count::pillager}, {_map})
+	else:
+		clear {zdspawn.ok}
+	if {defz::%{_map}%::playing::round} = 5:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 10:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 15:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 20:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 25:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 30:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 35:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 40:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 45:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 50:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 55:
+		clear {defz::%{_map}%::playing::count::*}
+	if {defz::%{_map}%::playing::round} = 60:
+		clear {defz::%{_map}%::playing::count::*}
+
+on shoot:
+	if shooter is blaze:
+		cancel event
+		loop all players:
+			if {defz::playing::spect::%loop-player%} is not set:
+				shtblz(shooter, loop-player)
+
+every 3 seconds:
+	loop all entities:
+		if loop-entity is blaze:
+			if {defz::%loop-entity's world%::playing::round} is set:
+				loop all players:
+					shtblz(loop-entity-1, loop-player-1)
+every seconds:
+	loop all entities:
+		if loop-entity is ravager:
+			set {_mst} to true
+		if {_mst} is set:
+			loop all players:
+				set {defz::bossdealed::%loop-player%} to true
+		else:
+			loop all players:
+				clear {defz::bossdealed::%loop-player%}
+
+every 20 ticks:
+	loop all players:
+		if {defz::bossdealed::%loop-player%} is set:
+			loop all entities:
+				if loop-entity-2's world is loop-player's world:
+					if loop-entity-2 is not a monster:
+						if loop-entity-2 is a player:
+							subtract 0.15 from {setting::defz::%loop-entity-2%::health}
+						else:
+							subtract 10 from loop-entity-2's health
+			stop
+every 0.1 seconds:
+	loop all entities:
+		if loop-entity is blaze or spider or cave spider:
+			if {defz::%loop-entity's world%::playing::round} is set:
+				while block under loop-entity is air:
+					set {_loc} to loop-entity's location
+					subtract 0.25 from {_loc}'s y-coordinate
+					teleport loop-entity to {_loc}
+					wait 1 tick
+
+function shtblz(sht: entity, lock: entity):
+	loop 1 times:
+		if {_sht}'s health <= 0:
+			stop
+		set {_b} to {_sht}'s head location
+		set {_b} to location 0.2 meter infront of {_b}
+		set {_loc2} to {_lock}'s location
+		set {_dir} to {_loc2}'s vector.subtract({_b}.toVector())
+		{_b}.setDirection({_dir})
+		#정확도
+		add random number between -2.5 and 2.5 to {_b}'s pitch
+		add random number between -2.5 and 2.5 to {_b}'s yaw
+		set {_u} to 0
+		while {_lock}'s health > 0:
+			wait 1 tick
+			add 1 to {_h}
+			if {_b} is set:
+				add 1 to {_u}
+				if {_u} > 3:
+					show 5 red colored dust with speed 0.001 at {_b}
+				set {_b} to location 0.6 meter infront of {_b}
+				loop all entities in radius 1 around {_b}:
+					set {_q} to damage({_lock}, 7, {defz::upgrade::armor::%{_lock}%}, {defz::upgrade::armorupgrade::%{_lock}%})
+					damage loop-entity by {_q}
+					stop
+					
+			else:
+				stop

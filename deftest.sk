@@ -1,0 +1,75 @@
+function zdstarttest(map: text, pl: player):
+	loop all players:
+		if zdis({defz::party::member::%{_pl}%::*}, loop-player) is true:
+			zdloopdetect("defz", "%loop-player%")
+		clear {defz::upgrade::armorupgrade::%loop-player%}
+		clear {defz::upgrade::swordupgrade::%loop-player%}
+		clear {defz::upgrade::bowupgrade::%loop-player%}
+		clearplayermission(loop-player)
+		clear {defz::upgrade::weapon::%loop-player%}
+		clear {defz::upgrade::armor::%loop-player%}
+		clear {defz::coin::%loop-player%}
+		clear {defz::battery::%loop-player%::*}
+	set {defz::%{_map}%::playing::playing} to true
+	set {locking::%{_map}%::def} to true
+	clear {defz::checkmission} 
+	clear {defz.rancount}
+	set {lock.defz} to true
+	clear {defz::%{_map}%::playing::count::*}
+	set {defz::%{_map}%::playing::round} to 0
+	set {defz::%{_map}%::playing::score} to 0
+	loop all players:
+		if {defz::party::member::%{_pl}%::*} contain loop-player:
+			set {_loc} to location at (-9, 13, 22) in world "%{_map}%" parsed as world
+			allst(loop-player)
+			teleport loop-player to {_loc}
+	clear {lock.defz}
+	wait 1 tick
+	loop all players:
+		if {defz::party::member::%{_pl}%::*} contain loop-player:
+			zdloopend("prestige::defz::%loop-player%")
+			zdloopend("setting::defz::%loop-player%")
+			zdloopend("leveling::defz::%loop-player%")
+			set {setting::defz::%loop-player%::attackrate} to 1
+			set {defz::life::%loop-player%} to 1
+			set {defz::battery::%loop-player%::value} to 100
+			execute console command "/clear %loop-player%"
+			message "&a테스트월드에 온것을 환영합니다!" to loop-player
+			message "&6책을 우클릭해 여러가지 설정을 할수있습니다" to loop-player
+			message "여러가지 테스트들을 해보세요!" to loop-player
+			message "&c[ALERT] 해당 단계는 테스트버전입니다, 다량의 오류나 버그가 일어날수 있음을 유의해주십시오" to loop-player
+			if {option::defz::%loop-player%::giveskillbook} is set:
+				give a book named "<purple>스킬" to the loop-player
+			addmission(loop-player)
+			clear loop-player's inventory
+			add 150 to {defz::coin::%loop-player%}
+			give a book named "<purple>상점" to the loop-player
+			give a book named "<purple>메타선택" to the loop-player
+			give a book named "<purple>설정변경" to the loop-player
+			apply potion of instant health of tier 20 to loop-player for 1 seconds
+			apply potion of night vision of tier 20 to loop-player for 9999 days
+			apply potion of saturation of tier 20 to loop-player for 1 seconds
+			set loop-player's max health to 10
+			set {setting::defz::%loop-player%::health} to {setting::defz::%loop-player%::maxhealth}
+			if {setting::defz::%loop-player%::maxhealth} is not set:
+				set {setting::defz::%loop-player%::maxhealth} to 10
+				set {setting::defz::%loop-player%::health} to {setting::defz::%loop-player%::maxhealth}
+	loop all entities:
+		if "%loop-entity's world%" is {_map}:
+			if loop-entity is not armor stand:
+				if loop-entity is monster:
+					set health of loop-entity to 0
+				else if loop-entity is iron golem:
+					set health of loop-entity to 0
+				else if loop-entity is wolf:
+					set health of loop-entity to 0
+	loop all players:
+		set {leveling::defz::%loop-player%::level} to 0
+		set {prestige::defz::%loop-player%::selector} to 0
+		set {leveling::defz::%loop-player%::xp::count} to 0
+		close loop-player's inventory
+	set {defz::playing::%{_map}%::playtime} to now
+	set {defz::%{_map}%::playing::round} to 1
+	set {defz::%{_map}%::playing::timerready} to true
+	clear {defz::%{_map}%::playing::count::*}
+	clear {locking::%{_map}%::def}

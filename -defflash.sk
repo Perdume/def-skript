@@ -1,0 +1,77 @@
+#1. 손전등 개별지급
+#2. 배터리 개별사용
+#3. 손전등 사용 안할시 블라인드
+#4. 손전등 사용시 10s 소모
+#5. 팀평균 배터리잔량에 띠라 손전등 사용중임에도 블라인드 주기 변화
+
+#ex)
+#66 ~ 100 = 주기없음
+#41 ~ 65 = 1분마다 5초씩 블라인드
+#31 ~ 40 = 45초마다 5초씩 블라인드
+#11 ~ 30 = 25초마다 5초씩 블라인드
+#1 ~ 10 = 10초마다 5초씩 블라인드
+#0 = 블라인드
+
+every seconds:
+	if 1 = 0:
+		loop all players:
+			if {defz::%loop-player's world%::playing::playing} is true:
+				if {defz::playing::spect::%loop-player%} is not set:
+					add 1 to {defz::battery::%loop-player%::blicount}
+					if {defz::battery::%loop-player%::value} = 0:
+						apply potion of blindness of tier 20 to loop-player for 999 seconds
+					else:
+						if {defz::battery::%loop-player%::value} <= 10:
+							set {defz::battery::%loop-player%::maxcount} to 10
+							if {defz::battery::%loop-player%::blicount} >= {defz::battery::%loop-player%::maxcount}:
+								apply potion of blindness of tier 20 to loop-player for 5 seconds
+								if {defz::battery::%loop-player%::blicount} >= {defz::battery::%loop-player%::maxcount} + 5:
+									clear {defz::battery::%loop-player%::blicount}
+									remove blindness from loop-player
+						else:
+							if {defz::battery::%loop-player%::value} <= 30:
+								set {defz::battery::%loop-player%::maxcount} to 25
+								if {defz::battery::%loop-player%::blicount} >= {defz::battery::%loop-player%::maxcount}:
+									apply potion of blindness of tier 20 to loop-player for 5 seconds
+									if {defz::battery::%loop-player%::blicount} >= {defz::battery::%loop-player%::maxcount} + 5:
+										clear {defz::battery::%loop-player%::blicount}
+										remove blindness from loop-player
+							else:
+								if {defz::battery::%loop-player%::value} <= 40:
+									set {defz::battery::%loop-player%::maxcount} to 45
+									if {defz::battery::%loop-player%::blicount} >= {defz::battery::%loop-player%::maxcount}:
+										apply potion of blindness of tier 20 to loop-player for 5 seconds
+										if {defz::battery::%loop-player%::blicount} >= {defz::battery::%loop-player%::maxcount} + 5:
+											clear {defz::battery::%loop-player%::blicount}
+											remove blindness from loop-player
+								else:
+									if {defz::battery::%loop-player%::value} <= 65:
+										set {defz::battery::%loop-player%::maxcount} to 60
+										if {defz::battery::%loop-player%::blicount} >= {defz::battery::%loop-player%::maxcount}:
+											apply potion of blindness of tier 20 to loop-player for 5 seconds
+											if {defz::battery::%loop-player%::blicount} >= {defz::battery::%loop-player%::maxcount} + 5:
+												clear {defz::battery::%loop-player%::blicount}
+												remove blindness from loop-player
+									else:
+										set {defz::battery::%loop-player%::maxcount} to 0
+										clear {defz::battery::%loop-player%::blicount}
+										remove blindness from loop-player
+
+
+
+every 10 seconds:
+	while {defz::pause} is true:
+		stop
+	loop all players:
+		if {defz::%loop-player's world%::playing::playing} is true:
+			if {defz::playing::spect::%loop-player%} is not set:
+				if {defz::battery::%loop-player%::value} > 0:
+					subtract 1 from {defz::battery::%loop-player%::value}
+
+command /setbattery <integer>:
+	trigger:
+		set {defz::battery::%player%::value} to arg-1
+
+command /setprestige <player> <integer>:
+	trigger:
+		set {prestige::defz::%arg-1%::selector} to arg-2

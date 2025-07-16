@@ -1,0 +1,317 @@
+function addmission(pl: player): #시작 또는 올클리어시 나옴
+	loop 4 times:
+		set {_a} to random integer between 1 and 4
+		if {_a} = 1:
+			add 5 to {defz::mission::ran::%{_pl}%::kill::좀비}
+		if {_a} = 2:
+			add 5 to {defz::mission::ran::%{_pl}%::kill::스켈레톤}
+		if {_a} = 3:
+			add 5 to {defz::mission::ran::%{_pl}%::kill::크리퍼}
+		if {_a} = 4:
+			add 5 to {defz::mission::ran::%{_pl}%::kill::거미}
+	if {defz::mission::ran::%{_pl}%::kill::좀비} is set:
+		set {_te} to "좀비를 죽이세요"
+		if zdcontains({defz::mission::list::%{_pl}%::*}, {_te}) is not true:
+			set {_rasd} to numbersetmission({_pl})
+			set {defz::mission::list::%{_pl}%::%{_rasd}%} to {_te}
+			set {defz::mission::value::%{_pl}%::%{_rasd}%} to 0
+			set {defz::mission::code::%{_pl}%::%{_rasd}%} to {_rasd}
+			set {defz::mission::max::%{_pl}%::%{_rasd}%} to {defz::mission::ran::%{_pl}%::kill::좀비}
+			set {defz::mission::type::%{_pl}%::%{_rasd}%} to "personal"
+			set {defz::mission::multiple::%{_pl}%::%{_rasd}%} to {defz::mission::ran::%{_pl}%::kill::좀비} / 5
+			set {defz::mission::if::%{_pl}%::%{_rasd}%} to "kill좀비"
+	if {defz::mission::ran::%{_pl}%::kill::스켈레톤} is set:
+		set {_te} to "스켈레톤을 죽이세요"
+		if zdcontains({defz::mission::list::%{_pl}%::*}, {_te}) is not true:
+			set {_rasd} to numbersetmission({_pl})
+			set {defz::mission::list::%{_pl}%::%{_rasd}%} to {_te}
+			set {defz::mission::value::%{_pl}%::%{_rasd}%} to 0
+			set {defz::mission::code::%{_pl}%::%{_rasd}%} to {_rasd}
+			set {defz::mission::max::%{_pl}%::%{_rasd}%} to {defz::mission::ran::%{_pl}%::kill::스켈레톤}
+			set {defz::mission::multiple::%{_pl}%::%{_rasd}%} to {defz::mission::ran::%{_pl}%::kill::스켈레톤} / 5
+			set {defz::mission::type::%{_pl}%::%{_rasd}%} to "personal"
+			set {defz::mission::if::%{_pl}%::%{_rasd}%} to "kill스켈레톤"
+	if {defz::mission::ran::%{_pl}%::kill::거미} is set:
+		set {_te} to "거미를 죽이세요"
+		if zdcontains({defz::mission::list::%{_pl}%::*}, {_te}) is not true:
+			set {_rasd} to numbersetmission({_pl})
+			set {defz::mission::list::%{_pl}%::%{_rasd}%} to {_te}
+			set {defz::mission::value::%{_pl}%::%{_rasd}%} to 0
+			set {defz::mission::code::%{_pl}%::%{_rasd}%} to {_rasd}
+			set {defz::mission::max::%{_pl}%::%{_rasd}%} to {defz::mission::ran::%{_pl}%::kill::거미}
+			set {defz::mission::multiple::%{_pl}%::%{_rasd}%} to {defz::mission::ran::%{_pl}%::kill::거미} / 5
+			set {defz::mission::type::%{_pl}%::%{_rasd}%} to "personal"
+			set {defz::mission::if::%{_pl}%::%{_rasd}%} to "kill거미"
+	if {defz::mission::ran::%{_pl}%::kill::크리퍼} is set:
+		set {_te} to "크리퍼를 죽이세요"
+		if zdcontains({defz::mission::list::%{_pl}%::*}, {_te}) is not true:
+			set {_rasd} to numbersetmission({_pl})
+			set {defz::mission::list::%{_pl}%::%{_rasd}%} to {_te}
+			set {defz::mission::value::%{_pl}%::%{_rasd}%} to 0
+			set {defz::mission::code::%{_pl}%::%{_rasd}%} to {_rasd}
+			set {defz::mission::max::%{_pl}%::%{_rasd}%} to {defz::mission::ran::%{_pl}%::kill::크리퍼}
+			set {defz::mission::multiple::%{_pl}%::%{_rasd}%} to {defz::mission::ran::%{_pl}%::kill::크리퍼} / 5
+			set {defz::mission::type::%{_pl}%::%{_rasd}%} to "personal"
+			set {defz::mission::if::%{_pl}%::%{_rasd}%} to "kill크리퍼"
+	clear {defz::mission::ran::*}
+
+function eventmission(map: text): #라운드 시작시 나타나는 미션
+	if {defz::%{_map}%::ending} is not set:
+		set {_a} to random integer between 1 and 5
+		loop all players:
+			if "%loop-player's world%" is {_map}:
+				if {defz::%loop-player's world%::playing::spect::%loop-player%} is not set:
+					if {_a} = 1:
+						if {defz::playing::spect::%loop-player%} is not set:
+							set {_te} to "주민을 지키세요"
+							if zdcontains({defz::mission::list::%loop-player%::*}, {_te}) is not true:
+								set {_rasd} to numbersetmission(loop-player)
+								set {defz::mission::list::%loop-player%::%{_rasd}%} to {_te}
+								set {defz::mission::value::%loop-player%::%{_rasd}%} to "X"
+								set {defz::mission::code::%loop-player%::%{_rasd}%} to {_rasd}
+								set {defz::mission::max::%loop-player%::%{_rasd}%} to 1
+								set {defz::mission::type::%loop-player%::%{_rasd}%} to "eventteamwork"
+								set {_multiple} to (random integer between 100 and {defz::playing::round} * 100) / 100
+								set {defz::mission::multiple::%loop-player%::%{_rasd}%} to {_multiple}
+								set {defz::mission::if::%loop-player%::%{_rasd}%} to "protect보호대상"
+								message "&6이벤트미션이 추가되었습니다 [%{defz::mission::list::%loop-player%::%{_rasd}%}%&6]" to loop-player
+					if {_a} = 2:
+						if {defz::playing::spect::%loop-player%} is not set:
+							set {_te} to "특수몹을 죽이세요"
+							if zdcontains({defz::mission::list::%loop-player%::*}, {_te}) is not true:
+								set {_rasd} to numbersetmission(loop-player)
+								set {defz::mission::list::%loop-player%::%{_rasd}%} to {_te}
+								set {defz::mission::value::%loop-player%::%{_rasd}%} to "X"
+								set {defz::mission::code::%loop-player%::%{_rasd}%} to {_rasd}
+								set {defz::mission::max::%loop-player%::%{_rasd}%} to 1
+								set {_multiple} to (random integer between 100 and {defz::playing::round} * 100) / 100
+								set {defz::mission::multiple::%loop-player%::%{_rasd}%} to {_multiple}
+								set {defz::mission::type::%loop-player%::%{_rasd}%} to "eventteamwork"
+								set {defz::mission::if::%loop-player%::%{_rasd}%} to "kill처치대상"
+								message "&6이벤트미션이 추가되었습니다 [%{defz::mission::list::%loop-player%::%{_rasd}%}%&6]" to loop-player
+					if {_a} = 3:
+						if {defz::playing::spect::%loop-player%} is not set:
+							set {_te} to "허기 9칸 이하로 클리어하세요"
+							if zdcontains({defz::mission::list::%loop-player%::*}, {_te}) is not true:
+								set {_rasd} to numbersetmission(loop-player)
+								set {defz::mission::list::%loop-player%::%{_rasd}%} to {_te}
+								set {defz::mission::value::%loop-player%::%{_rasd}%} to "X"
+								set {defz::mission::code::%loop-player%::%{_rasd}%} to {_rasd}
+								set {defz::mission::max::%loop-player%::%{_rasd}%} to 9 
+								set {_multiple} to (random integer between 100 and {defz::playing::round} * 100) / 100
+								set {defz::mission::multiple::%loop-player%::%{_rasd}%} to {_multiple}
+								set {defz::mission::type::%loop-player%::%{_rasd}%} to "eventpersonal"
+								set {defz::mission::if::%loop-player%::%{_rasd}%} to "donteatFOOD"
+								message "&6이벤트미션이 추가되었습니다 [%{defz::mission::list::%loop-player%::%{_rasd}%}%&6]" to loop-player
+								set loop-player's food to 8
+					if {_a} = 4:
+						if {defz::playing::spect::%loop-player%} is not set:
+							set {_te} to "황금사과를 먹지마세요"
+							if zdcontains({defz::mission::list::%loop-player%::*}, {_te}) is not true:
+								set {_rasd} to numbersetmission(loop-player)
+								set {defz::mission::list::%loop-player%::%{_rasd}%} to {_te}
+								set {defz::mission::code::%loop-player%::%{_rasd}%} to {_rasd}
+								set {defz::mission::value::%loop-player%::%{_rasd}%} to 0
+								set {defz::mission::max::%loop-player%::%{_rasd}%} to 5
+								set {_multiple} to (random integer between 100 and {defz::playing::round} * 100) / 100
+								set {defz::mission::multiple::%loop-player%::%{_rasd}%} to {_multiple}
+								set {defz::mission::type::%loop-player%::%{_rasd}%} to "eventpersonal"
+								set {defz::mission::if::%loop-player%::%{_rasd}%} to "donteatAPPLE"
+								message "&6이벤트미션이 추가되었습니다 [%{defz::mission::list::%loop-player%::%{_rasd}%}%&6]" to loop-player
+					if {_a} = 5:
+						if {defz::playing::spect::%loop-player%} is not set:
+							set {_te} to "제한시간 안에 클리어하세요"
+							if zdcontains({defz::mission::list::%loop-player%::*}, {_te}) is not true:
+								set {_rasd} to numbersetmission(loop-player)
+								set {defz::mission::list::%loop-player%::%{_rasd}%} to {_te}
+								set {defz::mission::code::%loop-player%::%{_rasd}%} to {_rasd}
+								set {defz::mission::value::%loop-player%::%{_rasd}%} to 60
+								set {defz::mission::max::%loop-player%::%{_rasd}%} to 60
+								set {_multiple} to (random integer between 100 and {defz::playing::round} * 100) / 100
+								set {defz::mission::multiple::%loop-player%::%{_rasd}%} to {_multiple}
+								set {defz::mission::type::%loop-player%::%{_rasd}%} to "eventteam"
+								set {defz::mission::if::%loop-player%::%{_rasd}%} to "intimeCLEAR"
+								message "&6이벤트미션이 추가되었습니다 [%{defz::mission::list::%loop-player%::%{_rasd}%}%&6]" to loop-player
+		clear {defz::mission::ran::*}
+		if {_a} = 1:
+			set {_loc} to location at (-9, 13, 22) in world "%{_map}%" parsed as world
+			spawn Villager at location at {_loc}
+			set {defz::type::%last spawned entity's uuid%} to "보호대상"
+			set last spawned entity's max health to 1
+			set last spawned entity's health to last spawned entity's max health
+		if {_a} = 2:
+			set {_loc} to location at (-9, 13, 22) in world "%{_map}%" parsed as world
+			spawn enderman at location at {_loc}
+			set {defz::type::%last spawned entity's uuid%} to "처치대상"
+			set last spawned entity's max health to (({defz::%{_map}%::playing::round})^2)/1.5 + 20
+			set last spawned entity's health to last spawned entity's max health
+
+function bossmission(map: text): #Boss
+	if {defz::%{_map}%::ending} is not set:
+		set {_a} to random integer between 1 and 1
+		loop all players:
+			if "%loop-player's world%" is {_map}:
+				clearplayermission(loop-player)
+				if {defz::%loop-player's world%::playing::spect::%loop-player%} is not set:
+					if {_a} = 1:
+						if {defz::playing::spect::%loop-player%} is not set:
+							set {_te} to "보스를 죽이세요"
+							if zdcontains({defz::mission::list::%loop-player%::*}, {_te}) is not true:
+								set {_rasd} to numbersetmission(loop-player)
+								set {defz::mission::list::%loop-player%::%{_rasd}%} to {_te}
+								set {defz::mission::value::%loop-player%::%{_rasd}%} to "X"
+								set {defz::mission::code::%loop-player%::%{_rasd}%} to {_rasd}
+								set {defz::mission::max::%loop-player%::%{_rasd}%} to 1
+								set {defz::mission::type::%loop-player%::%{_rasd}%} to "BOSS"
+								set {_multiple} to {defz::%loop-player's world%::playing::round} + 5
+								set {defz::mission::multiple::%loop-player%::%{_rasd}%} to {_multiple}
+								set {defz::mission::if::%loop-player%::%{_rasd}%} to "Killboss"
+								message "&c미션이 추가되었습니다 [%{defz::mission::list::%loop-player%::%{_rasd}%}%&c]" to loop-player
+function roundendmission(map: text):
+	if {defz::%{_map}%::bugcought11} is not true:
+		loop all players:
+			if "%loop-player's world%" is {_map}:
+				loop {defz::mission::list::%loop-player%::*}:
+					if {defz::mission::if::%loop-player%::%loop-index%} is "protect보호대상":
+						loop all entities:
+							if "%loop-entity-2's world%" is {_map}:
+								if loop-entity-2 is Villager:
+									loop all players:
+										if "%loop-player-2's world%" is {_map}:
+											loop {defz::mission::list::%loop-player-2%::*}:
+												if {defz::mission::if::%loop-player-2%::%loop-index-2%} is "protect보호대상":
+													missionclear(loop-player-2, loop-index-2)
+									kill loop-entity-2
+					if {defz::mission::if::%loop-player%::%loop-index%} is "kill처치대상":
+						missionfail(loop-player, loop-index)
+					if {defz::mission::if::%loop-player%::%loop-index%} is "donteatFOOD":
+						missionclear(loop-player, loop-index)
+					if {defz::mission::if::%loop-player%::%loop-index%} is "donteatAPPLE":
+						missionclear(loop-player, loop-index)
+					if {defz::mission::if::%loop-player%::%loop-index%} is "intimeCLEAR":
+						missionclear(loop-player, loop-index)
+function numbersetmission(pl: player) :: integer:
+	if {defz::mission::code::%{_pl}%::*} is set:
+		loop {defz::mission::code::%{_pl}%::*}:
+			add 1 to {_num}
+			if {defz::mission::code::%{_pl}%::%{_num}%} is not set:
+				return {_num}
+		add 1 to {_num}
+		return {_num}
+	else:
+		return 1
+function clearallmission():
+	clear {defz::mission::*}
+function clearplayermission(pl: player):
+	clear {defz::mission::list::%{_pl}%::*}
+	clear {defz::mission::code::%{_pl}%::*}
+	clear {defz::mission::max::%{_pl}%::*}
+	clear {defz::mission::value::%{_pl}%::*}
+	clear {defz::mission::if::%{_pl}%::*}
+function clearoneplayermission(pl: player, num: text):
+	clear {defz::mission::list::%{_pl}%::%{_num}%}
+	clear {defz::mission::code::%{_pl}%::%{_num}%}
+	clear {defz::mission::max::%{_pl}%::%{_num}%}
+	clear {defz::mission::value::%{_pl}%::%{_num}%}
+	clear {defz::mission::if::%{_pl}%::%{_num}%}
+	clear {defz::mission::multiple::%{_pl}%::%{_num}%}
+
+function missionclear(pl: player, num: text):
+	if {defz::%{_pl}'s world%::playing::spect::%{_pl}%} is not set:
+		message "&aMission Complete! [%{defz::mission::list::%{_pl}%::%{_num}%}%&a]" to {_pl}
+		set {_palsd} to 100 * {defz::mission::multiple::%{_pl}%::%{_num}%}*(1+{prestige::defz::%{_pl}%::exp})
+		xpadd({_pl}, {_palsd}, "missionclear")
+		clearoneplayermission({_pl}, {_num})
+function missionfail(pl: player, num: text):
+	if {defz::%{_pl}'s world%::playing::spect::%{_pl}%} is not set:
+		message "&cMission Failed [%{defz::mission::list::%{_pl}%::%{_num}%}%&c]" to {_pl}
+		clearoneplayermission({_pl}, {_num})
+
+every seconds:
+	loop all players:
+		if {defz::%loop-player's world%::playing::playing} is set:
+			loop {defz::mission::list::%loop-player%::*}:
+				if {defz::mission::max::%loop-player%::%loop-index%} <= {defz::mission::value::%loop-player%::%loop-index%}:
+					if {defz::mission::if::%loop-player%::%loop-index%} is not "intimeCLEAR":
+						missionclear(loop-player, loop-index)
+				if {defz::mission::if::%loop-player%::%loop-index%} is "donteatFOOD":
+					if loop-player's food >= 9:
+						missionfail(loop-player, loop-index)
+				if {defz::mission::if::%loop-player%::%loop-index%} is "intimeCLEAR":
+					if {defz::mission::value::%loop-player%::%loop-index%} < 1:
+						missionfail(loop-player, loop-index)
+					else:
+						subtract 1 from {defz::mission::value::%loop-player%::%loop-index%}
+			clear {_ailohkljbdf}
+			loop {defz::mission::list::%loop-player%::*}:
+				if {defz::mission::type::%loop-player%::%loop-index%} is "personal":
+					add 1 to {_ailohkljbdf}
+				if {defz::mission::type::%loop-player%::%loop-index%} is "BOSS":
+					add 1 to {_ailohkljbdf}
+			if {_ailohkljbdf} is not set:
+				if {defz::%loop-player's world%::playing::playing} is set:
+					if {defz::checkmission} is not set:
+						if {defz::%loop-player's world%::playing::spect::%loop-player%} is not set:
+							message "&6개인미션을 전부 클리어하였습니다, 다음 개인미션을 시작합니다" to loop-player
+							xpadd(loop-player, 300*(1+{prestige::defz::%loop-player%::exp}), "missionclear")
+							addmission(loop-player)
+					if {defz::ending} is not true:
+						clear {defz::checkmission}
+
+command /custommissionadd:
+	permission: admin.use
+	trigger:
+		eventmission("%player's world%")
+command /missionadd:
+	permission: admin.use
+	trigger:
+		addmission(player)
+
+command /missionclear:
+	permission: admin.use
+	trigger:
+		clearplayermission(player)
+
+command /missionclearall:
+	permission: admin.use
+	trigger:
+		clearallmission()
+
+command /xxp <number>:
+	permission: admin.use
+	trigger:
+		xpadd(player, arg-1, "no")
+command /xkp <number>:
+	permission: admin.use
+	trigger:
+		set {_multiple} to (random integer between 100 and {defz::playing::round} * 100) / 100
+		message "%{_multiple}%"
+command /xlp <number>:
+	permission: admin.use
+	trigger:
+		set {_xp} to arg-1
+		set {leveling::defz::%player%::level} to {_xp}
+
+command /setcoin <player> <integer>:
+	permission: admin.use
+	trigger:
+		set {defz::coin::%arg-1%} to arg-2
+
+every seconds:
+	loop all players:
+		if {defz::%loop-player's world%::playing::playing} is true:
+			set loop-player's level to {leveling::defz::%loop-player%::level}
+			set {_c} to {leveling::defz::%loop-player%::level} - 1
+			set {_a} to calcExperience({leveling::defz::%loop-player%::level})
+			subtract calcExperience({_c}) from {_a}
+			set {_d} to {leveling::defz::%loop-player%::level}
+			set {_b} to maxxp({_d})
+			set {_res} to {leveling::defz::%loop-player%::xp::count} / {_b}
+			set level progress of the loop-player to {_res}
+	loop all players:
+		if loop-player is in "lobby":
+			reveal loop-player from all players
+			reveal all players from loop-player
+
+
+

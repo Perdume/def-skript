@@ -1,0 +1,1330 @@
+
+function zdcontains(list: objects, check: object) :: boolean:
+    loop {_list::*}:
+        if {_check} contains loop-value:
+            return true
+    return false
+	
+function zdmapselect(dif: text, pl: player):
+	loop {defz::maplist::*}:
+		if {defz::%loop-value%::playing::playing} is not set:
+			set {_canplay} to true
+	if {_canplay} is not set:
+		message "&c맵이 다 찼습니다" to {_pl}
+		stop
+	set {_s} to size of {defz::maplist::*} 
+	set {_b} to random integer between 1 and {_s}
+	set {_a} to {_b}
+	zdloopend("defz::%{_map}%")
+	if {defz::%{defz::maplist::%{_a}%}%::playing::playing} is not set:
+		if {defz::map::hard::%{defz::maplist::%{_a}%}%} is not set:
+			set {defz::%{defz::maplist::%{_a}%}%::playing::number::player} to number of {defz::party::member::%{_pl}%::*}
+			set {defz::%{defz::maplist::%{_a}%}%::playing::list::player::*} to {defz::party::member::%{_pl}%::*}
+			set {defz::%{defz::maplist::%{_a}%}%::playing::count2::player::*} to {defz::party::member::%{_pl}%::*}
+			set {defz::%{defz::maplist::%{_a}%}%::playing::owner} to {_pl}
+			if {_dif} is "TEST":
+				set {defz::%{defz::maplist::%{_a}%}%::dif} to "TEST"
+			else:
+				set {defz::%{defz::maplist::%{_a}%}%::dif} to "%{_dif}%"
+			if {_dif} is "HARD":
+				set {defz::%{defz::maplist::%{_a}%}%::playing::hardmode} to true
+			if {_dif} is not "TEST":
+				zdstart({defz::maplist::%{_a}%}, {_pl})
+			if {_dif} is "TEST":
+				zdstarttest({defz::maplist::%{_a}%}, {_pl})
+		else:
+			zdmapselect({_dif}, {_pl})
+	else:
+		zdmapselect({_dif}, {_pl})
+
+function zdmapselecthard(dif: text, pl: player):
+	loop {defz::maplisthard::*}:
+		if {defz::%loop-value%::playing::playing} is not set:
+			set {_canplay} to true
+	if {_canplay} is not set:
+		message "&c맵이 다 찼습니다" to {_pl}
+		stop
+	set {_s} to size of {defz::maplist::*} 
+	set {_b} to random integer between 1 and {_s}
+	set {_a} to {_b}
+	zdloopend("defz::%{_map}%")
+	if {defz::%{defz::maplist::%{_a}%}%::playing::playing} is not set:
+		if {defz::map::hard::%{defz::maplist::%{_a}%}%} is set:
+			set {defz::%{defz::maplist::%{_a}%}%::playing::number::player} to number of {defz::party::member::%{_pl}%::*}
+			set {defz::%{defz::maplist::%{_a}%}%::playing::list::player::*} to {defz::party::member::%{_pl}%::*}
+			set {defz::%{defz::maplist::%{_a}%}%::playing::count2::player::*} to {defz::party::member::%{_pl}%::*}
+			set {defz::%{defz::maplist::%{_a}%}%::playing::owner} to {_pl}
+			if {_dif} is "TEST":
+				set {defz::%{defz::maplist::%{_a}%}%::dif} to "TEST"
+			else:
+				set {defz::%{defz::maplist::%{_a}%}%::dif} to "%{_dif}%"
+			if {_dif} is "HARD":
+				set {defz::%{defz::maplist::%{_a}%}%::playing::hardmode} to true
+			if {_dif} is not "TEST":
+				zdstart({defz::maplist::%{_a}%}, {_pl})
+			if {_dif} is "TEST":
+				zdstarttest({defz::maplist::%{_a}%}, {_pl})
+		else:
+			zdmapselecthard({_dif}, {_pl})
+	else:
+		zdmapselecthard({_dif}, {_pl})
+		
+function zdloopend(index: text):
+	if {_index} is set:
+		loop indexes of {%{_index}%::*}:
+			if indexes of {%{_index}%::%loop-value%::*} is set:
+				zdloopend("%{_index}%::%loop-value%")
+			if {%{_index}%::%loop-value%} is set:
+				delete {%{_index}%::%loop-value%}
+
+function zdloopdetect(index: text, detect: text):
+	if {_index} is set:
+		loop indexes of {%{_index}%::*}:
+			if indexes of {%{_index}%::%loop-value%::*} is set:
+				set {_s::*} to split {_index} at "::"
+				if zdis({_s::*}, {_detect}) is true:
+					zdloopdetect("%{_index}%::%loop-value%", {_detect})
+			if {%{_index}%::%loop-value%} is set:
+				if loop-value is {_detect}:
+					delete {%{_index}%::%loop-value%}
+					zsdebug({_detect}, "&cDetect! %{_index}%::%loop-value%")
+			
+command /zdvarclear [<text>]:
+	permission: admin.use
+	trigger:
+		zdloopend(arg-1)
+
+function zdis(list: objects, check: object) :: boolean:
+    loop {_list::*}:
+        if {_check} is loop-value:
+            return true
+    return false
+
+function zdstart(map: text, pl: player):
+	loop all players:
+		if zdis({defz::party::member::%{_pl}%::*}, loop-player) is true:
+			zdloopdetect("defz", "%loop-player%")
+		clear {defz::upgrade::armorupgrade::%loop-player%}
+		clear {defz::upgrade::swordupgrade::%loop-player%}
+		clear {defz::upgrade::bowupgrade::%loop-player%}
+		clearplayermission(loop-player)
+		clear {defz::upgrade::weapon::%loop-player%}
+		clear {defz::upgrade::armor::%loop-player%}
+		clear {defz::coin::%loop-player%}
+		clear {defz::battery::%loop-player%::*}
+	clear {defz::%{_map}%::playing::timerready}
+	set {defz::%{_map}%::playing::playing} to true
+	set {locking::%{_map}%::def} to true
+	clear {defz::checkmission} 
+	clear {defz.rancount}
+	set {lock.defz} to true
+	clear {defz::%{_map}%::playing::count::*}
+	set {defz::%{_map}%::playing::round} to 0
+	set {defz::%{_map}%::playing::score} to 0
+	loop all players:
+		if zdis({defz::party::member::%{_pl}%::*}, loop-player) is true:
+			set {_loc} to location at (-9, 13, 22) in world "%{_map}%" parsed as world
+			allst(loop-player)
+			teleport loop-player to {_loc}
+	clear {lock.defz}
+	wait 1 tick
+	loop all players:
+		if zdis({defz::party::member::%{_pl}%::*}, loop-player) is true:
+			damage loop-player by 0.00000001
+			zdloopend("prestige::defz::%loop-player%")
+			zdloopend("setting::defz::%loop-player%")
+			zdloopend("leveling::defz::%loop-player%")
+			set {setting::defz::%loop-player%::attackrate} to 1
+			set {defz::life::%loop-player%} to 1
+			set {defz::battery::%loop-player%::value} to 100
+			set {defz::mana::%loop-player%} to 0
+			execute console command "/clear %loop-player%"
+			message "&a아이템을 사고 서로 협력하여 몬스터들을 죽이세요!" to loop-player
+			message "&6책을 우클릭해 상점을 여실 수 있습니다" to loop-player
+			message "30초후에 게임이 시작됩니다" to loop-player
+			addmission(loop-player)
+			clear loop-player's inventory
+			add 150 to {defz::coin::%loop-player%}
+			set {defz::skill::atk::%loop-player%} to 1
+			give a book named "<purple>상점" to the loop-player
+			give a book named "<purple>메타선택" to the loop-player
+			apply potion of instant health of tier 200 to loop-player for 10 seconds
+			apply potion of night vision of tier 20 to loop-player for 9999 days
+			apply potion of saturation of tier 200 to loop-player for 10 seconds
+			set loop-player's max health to 10
+			set {setting::defz::%loop-player%::health} to {setting::defz::%loop-player%::maxhealth}
+			if {setting::defz::%loop-player%::maxhealth} is not set:
+				set {setting::defz::%loop-player%::maxhealth} to 10
+				set {setting::defz::%loop-player%::health} to {setting::defz::%loop-player%::maxhealth}
+	loop {defz::%{_map}%::playing::list::player::*}:
+		if {_str} is not set:
+			set {_str} to "%loop-value%"
+		else:
+			set {_str} to "%{_str}% %loop-value%"
+	execute console command "/replay start zstest %{_str}%"
+	loop all entities:
+		if "%loop-entity's world%" is {_map}:
+			if loop-entity is not armor stand:
+				if loop-entity is monster:
+					set health of loop-entity to 0
+				else if loop-entity is iron golem:
+					set health of loop-entity to 0
+				else if loop-entity is wolf:
+					set health of loop-entity to 0
+	loop 250 times:
+		loop {defz::party::member::%{_pl}%::*}:
+			set {_pl2} to "%loop-value-2%" parsed as offlineplayer
+			if {defz::playing::quit::%{_pl2}%} is not set:
+				set {_c1} to true
+				if "%{_pl2}'s world%" is {_map}:
+					set {_c2} to true
+		if {_c1} is not set:
+			zdendfast({_map})
+		if {_c2} is not set:
+			zdendfast({_map})
+		wait 0.1 seconds
+	while {defz::pause} is true:
+		wait 1 seconds
+	loop all players:
+		if "%loop-player's world%" is {_map}:
+			message "5" to loop-player
+	wait 1 seconds
+	loop all players:
+		if "%loop-player's world%" is {_map}:
+			message "4" to loop-player
+	wait 1 seconds
+	loop all players:
+		if "%loop-player's world%" is {_map}:
+			message "3" to loop-player
+	wait 1 seconds
+	loop all players:
+		if "%loop-player's world%" is {_map}:
+			message "2" to loop-player
+	wait 1 seconds
+	loop all players:
+		if "%loop-player's world%" is {_map}:
+			message "1" to loop-player
+			loop all items in loop-player's inventory:
+				loop-item is a book named "<purple>메타선택"
+				remove loop-item from loop-player's inventory
+				close loop-player's inventory
+				remove saturation from loop-player
+				set {leveling::defz::%loop-player%::level} to 0
+				set {prestige::defz::%loop-player%::selector} to 0
+				set {leveling::defz::%loop-player%::xp::count} to 0
+			if {defz::%loop-player's world%::skill::setting::%loop-player%} is "atk":
+				set {defz::skill::atk::%loop-player%} to 1
+			if {defz::%loop-player's world%::skill::setting::%loop-player%} is "meta1":
+				set loop-player's max health to 5
+				set {setting::defz::%loop-player%::health} to {setting::defz::%loop-player%::maxhealth}
+				set {setting::defz::%loop-player%::maxhealth} to 5
+				set {setting::defz::%loop-player%::health} to {setting::defz::%loop-player%::maxhealth}
+			if {option::defz::%loop-player%::giveskillbook} is set:
+				give a book named "<purple>스킬" to the loop-player
+
+	wait 1 seconds
+	set {defz::playing::%{_map}%::playtime} to now
+	set {defz::%{_map}%::playing::round} to 1
+	set {defz::%{_map}%::playing::timerready} to true
+	if {defz::%{_map}%::playing::hardmode} is true:
+		ordeal({defz::%{_map}%::playing::round}, {_map})
+	clear {defz::%{_map}%::playing::count::*}
+	clear {locking::%{_map}%::def}
+	zdlevel({_map})
+	
+function partyquit(map: text):
+	set {_pp} to {defz::%{_map}%::playing::list::player::1}
+	loop {defz::party::member::%{defz::party::inpt::%{_pp}%}%::*}: #party quit
+		set {_player} to "%loop-value%" parsed as offlineplayer
+		if {defz::playing::quit::%{_player}%} is true:
+			if {_player} is {defz::party::member::%{defz::party::inpt::%{_pp}%}%::*}:
+				clear {defz::party::member::%{defz::party::inpt::%{_pp}%}%::*}
+				clear {defz::party::owner::%{_player}%}
+				stop
+			clear {defz::party::member::%{defz::party::inpt::%{_pp}%}%::%loop-index%}
+			if {defz::party::owner::%{_player}%} is set:
+				set {_ranown} to true
+				clear {defz::party::owner::%{_player}%}
+			add {_player} to {_quitlist::*}
+	loop {defz::party::member::%{defz::party::inpt::%{_pp}%}%::*}:
+		set {_player} to "%loop-value%" parsed as player
+		loop {_quitlist::*}:
+			message "&c%loop-value-2%님이 파티에서 나갔습니다" to {_player}
+	if {_ranown} is true:
+		loop {defz::party::member::%{defz::party::inpt::%{_pp}%}%::*}:
+			add loop-index to {_num::*}
+		set {_num} to random integer between 1 and number of {_num::*}
+		set {_player} to "%{defz::party::member::%{defz::party::inpt::%{_pp}%}%::%{_num::%{_num}%}%}%" parsed as player
+		set {defz::party::owner::%{_player}%} to true
+		set {defz::party::member::%{_player}%::*} to {defz::party::member::%{defz::party::inpt::%{_pp}%}%::*}
+		clear {defz::party::member::%{defz::party::inpt::%{_pp}%}%::*}
+		message "&a당신이 이제부터 파티장입니다" to {_player}
+
+function zdendfast(map: text):
+	set {defz::%{_map}%::checkmission} to true
+	if {defz::%{_map}%::ending} is not set:
+		set {defz::%{_map}%::ending} to true
+		if {defz::%{_map}%::playing::playing} is true:
+			clear {defz::%{_map}%::playing::playing}
+			zdloopend("db::defz::map::%{_map}%")
+			loop all entities:
+				if "%loop-entity's world%" is {_map}:
+					if loop-entity is not armor stand:
+						if loop-entity is monster:
+							set health of loop-entity to 0
+						else if loop-entity is iron golem:
+							set health of loop-entity to 0
+						else if loop-entity is wolf:
+							set health of loop-entity to 0
+			loop all players:
+				clear {defz::upgrade::armorupgrade::%loop-player%}
+				clear {defz::upgrade::swordupgrade::%loop-player%}
+				clear {defz::upgrade::bowupgrade::%loop-player%}
+				clearplayermission(loop-player)
+				clear {defz::upgrade::weapon::%loop-player%}
+				clear {defz::upgrade::armor::%loop-player%}
+				clear {defz::coin::%loop-player%}
+				clear {defz::battery::%loop-player%::*}
+			clear {rankdef::*}
+			clear {defzz.lock2}
+			clear {defz::%{_map}%::upgrade::*}
+			clear {defz::%{_map}%::coin::*}
+			loop {defz::%{_map}%::playing::list::player::*}:
+				set {_pl} to "%loop-value%" parsed as offlineplayer
+				clear {_pl}'s inventory
+				remove speed from {_pl}
+				clear {defz::%{_map}%::skill::setting::*}
+				execute console command "/effect %{_pl}% clear"
+				set {_loc} to location at (0, 64, 0) in world "lobby"
+				teleport {_pl} to {_loc}
+			loop all players:
+				if "%loop-player's world%" is {_map}:
+					clear loop-player's inventory
+					remove speed from loop-player
+					clear {defz::%{_map}%::skill::setting::*}
+					execute console command "/effect %loop-player% clear"
+					set {_loc} to location at (0, 64, 0) in world "lobby"
+					teleport loop-player to {_loc}
+			partyquit({_map})
+			zdloopend("defz::%{_map}%")
+			clear {defz.lock}
+			clear {defz::upgrade::abusewarn::*}
+			clear {defz::checkmission}
+			clear {defz::ending}
+			clear {defz::%{_map}%::playing::playing}
+			clear {defz::playing::%{_map}%::playtime}
+			loop all entities:
+				if "%loop-entity's world%" is {_map}:
+					if loop-entity is not armor stand:
+						if loop-entity is monster:
+							set health of loop-entity to 0
+						else if loop-entity is iron golem:
+							set health of loop-entity to 0
+						else if loop-entity is wolf:
+							set health of loop-entity to 0
+
+function zdend(map: text):
+	set {defz::%{_map}%::checkmission} to true
+	if {defz::%{_map}%::ending} is not set:
+		set {defz::%{_map}%::ending} to true
+		if {defz::%{_map}%::playing::playing} is true:
+			zdloopend("db::defz::map::%{_map}%")
+			loop all entities:
+				if "%loop-entity's world%" is {_map}:
+					if loop-entity is not armor stand:
+						if loop-entity is monster:
+							set health of loop-entity to 0
+						else if loop-entity is iron golem:
+							set health of loop-entity to 0
+						else if loop-entity is wolf:
+							set health of loop-entity to 0
+			loop all players:
+				if {mutereult::%loop-player%} is not set:
+					if {muteall::%loop-player%} is not set:
+						message "<yellow>=====RESULT=====" to loop-player
+						message "<light green>PLAYER: %{defz::%{_map}%::playing::list::player::*}%" to loop-player
+						message "<light green>DIFFICULTY: %{defz::%{_map}%::dif}%" to loop-player
+						message "ROUND: %{defz::%{_map}%::playing::round}%" to loop-player
+						message "SCORE: %{defz::%{_map}%::playing::score}%" to loop-player
+						message "<yellow>================" to loop-player
+						clear {defz::upgrade::armorupgrade::%loop-player%}
+						clear {defz::upgrade::swordupgrade::%loop-player%}
+						clear {defz::upgrade::bowupgrade::%loop-player%}
+						clearplayermission(loop-player)
+						clear {defz::upgrade::weapon::%loop-player%}
+						clear {defz::upgrade::armor::%loop-player%}
+						clear {defz::coin::%loop-player%}
+						clear {defz::battery::%loop-player%::*}
+						set loop-player's max health to 10
+						set loop-player's health to loop-player's max health
+			execute console command "/replay stop zstest"
+			clear {rankdef::*}
+			clear {defzz.lock2}
+			clear {defz::%{_map}%::upgrade::*}
+			clear {defz::%{_map}%::coin::*}
+			wait 3 seconds
+			loop {defz::%{_map}%::playing::list::player::*}:
+				set {_pl} to "%loop-value%" parsed as offlineplayer
+				clear {_pl}'s inventory
+				remove speed from {_pl}
+				remove hunger from {_pl}
+				remove poison from {_pl}
+				clear {defz::%{_map}%::skill::setting::*}
+				execute console command "/effect %{_pl}% clear"
+				set {_loc} to location at (0, 64, 0) in world "lobby"
+				teleport {_pl} to {_loc}
+				apply potion of night vision of tier 20 to loop-player for 9999 days
+			loop all players:
+				if "%loop-player's world%" is {_map}:
+					clear loop-player's inventory
+					remove speed from loop-player
+					remove hunger from loop-player
+					remove poison from loop-player
+					clear {defz::%{_map}%::skill::setting::*}
+					execute console command "/effect %loop-player% clear"
+					set {_loc} to location at (0, 64, 0) in world "lobby"
+					teleport loop-player to {_loc}
+					apply potion of night vision of tier 20 to loop-player for 9999 days
+			partyquit({_map})
+			zdloopend("defz::%{_map}%")
+			clear {defz.lock}
+			clear {defz::upgrade::abusewarn::*}
+			clear {defz::checkmission}
+			clear {defz::ending}
+			clear {defz::%{_map}%::playing::playing}
+			clear {defz::playing::%{_map}%::playtime}
+			loop all entities:
+				if "%loop-entity's world%" is {_map}:
+					if loop-entity is not armor stand:
+						if loop-entity is monster:
+							set health of loop-entity to 0
+						else if loop-entity is iron golem:
+							set health of loop-entity to 0
+						else if loop-entity is wolf:
+							set health of loop-entity to 0
+
+command /setzddif [<text>]:
+	permission : admin.use
+	trigger:
+		set {defz::dif} to arg-1
+
+function zdloopenddebug(index: text, pl: player):
+	if {_index} is set:
+		loop indexes of {%{_index}%::*}:
+			message "&aDetect {%{_index}%::%loop-value%}" to {_pl}
+			if indexes of {%{_index}%::%loop-value%::*} is set:
+				zdloopenddebug("%{_index}%::%loop-value%", {_pl})
+			if {%{_index}%::%loop-value%} is set:
+				delete {%{_index}%::%loop-value%}
+				message "&aDeleted {%{_index}%::%loop-value%}" to {_pl}
+
+command /zsdebugcleaner:
+	permission : admin.use
+	trigger:
+		loop {defz::maplist::*}:
+			zdloopenddebug("defz::%loop-value%", player)
+
+command /zsdebugcleaner2 [<text>]:
+	permission : admin.use
+	trigger:
+		zdloopenddebug("%arg-1%", player)
+		
+command /setzdscore [<text>] [<number>]:
+	permission : admin.use
+	trigger:
+		set {deflist::%arg-1%} to arg-2
+		message "successfully changed"
+every seconds:
+	loop {defz::maplist::*}:
+		if {defz::%loop-value%::playing::playing} is true:
+			clear {defz::%loop-value%::playing::monsters}
+			loop all entities:
+				if loop-entity's world is loop-value-1:
+					if loop-entity is monster:
+						add 1 to {defz::%loop-value-1%::playing::monsters}
+		if {defz::%loop-value%::playing::timerready} is true:
+			if {db::defz::map::%loop-value%::timer::corrunt} is not set:
+				set {db::defz::map::%loop-value%::timer::corrunt} to 0
+			add 1 to {db::defz::map::%loop-value%::timer::corrunt}
+			loop all players:	
+				apply potion of night vision of tier 20 to loop-player for 9999 days
+				if loop-player's world is loop-value-1:
+					if {defz::%loop-value-1%::skill::setting::%loop-player%} is "meta1":
+						if {defz::mana::%loop-player%} is not set:
+							set {defz::mana::%loop-player%} to 0
+						if {defz::mana::%loop-player%} + 1 > 100:
+							set {defz::mana::%loop-player%} to 100
+						else:
+							set {defz::mana::%loop-player%} to {defz::mana::%loop-player%} + 1
+
+function checkmon(map: text):
+	if {defz::%{_map}%::dif} is not "TEST":
+		if {defz::%{_map}%::playing::playing} is true:
+			if {defz::%{_map}%::ending} is not set:
+				clear {defz::%{_map}%::playing::monstercount}
+				loop all entities:
+					if loop-entity's world is {_map}:
+						if loop-entity is monster:
+							add 1 to {defz::%{_map}%::playing::monstercount}
+							set {defzz.lock2} to true
+							wait 1 tick
+				if {defz::%{_map}%::playing::monstercount} is not set:
+					while {defz::pause} is true:
+						stop
+					set {_t} to {db::defz::map::%{_map}%::timer::corrunt} - {db::defz::map::%{_map}%::timer::old}
+					zdsettime({defz::%{_map}%::playing::round}, {_t})
+					set {db::defz::map::%{_map}%::timer::old} to {db::defz::map::%{_map}%::timer::corrunt}
+					roundendmission({_map})
+					wait 1 tick
+					add 1 to {defz::%{_map}%::playing::round}
+					clear {defzz.lock2}
+					if {defz::%{_map}%::playing::hardmode} is true:
+						ordeal({defz::%{_map}%::playing::round}, {_map})
+					if {locking::%{_map}%::def} is not set:
+						if mod({defz::%{_map}%::playing::round}, 5) = 0:
+							loop all players:
+								if "%loop-player's world%" == {_map}:
+									if {defz::%loop-player's world%::skill::setting::%loop-player%} is "meta2":
+										if {defz::%loop-player's world%::playing::spect::%loop-player%} is not set:
+											loop 3 times:
+												spawn iron golem at loop-player's location
+												set last spawned entity's max health to ((({defz::%{_map}%::playing::round}-1)^2.25)*(600/625) + 400) / 8
+												set last spawned entity's health to last spawned entity's max health
+												set {defz::golem::%last spawned entity%} to player
+												set {defz::type::%last spawned entity's uuid%} to "골렘"
+						chance of 25%:
+							set {defz::%{_map}%::bugcought11} to true
+							eventmission({_map})
+						if mod({defz::%{_map}%::playing::round}, 10) = 1:
+							loop all players:
+								if "%loop-player's world%" == {_map}:
+									loop {defz::mission::list::%loop-player%::*}:
+										if {defz::mission::type::%loop-player%::%loop-index%} is "BOSS":
+											missionclear(loop-player, loop-index)
+						zdlevel({_map})
+						clear {defz::%{_map}%::bugcought11}
+function ordeal(stage: integer, map: text):
+	loop all players:
+		if "%loop-player's world%" is "%{_map}%":
+			if {_stage} = 1:
+				send title "<red>제 1 시련" with subtitle "<red>모든 몬스터 공격력이 25%% 상승합니다" to loop-player for 1 seconds with fadein 1 second and fade out 1 second
+				set {defz::%{_map}%::playing::ordealcount::1} to true
+			if {_stage} = 6:
+				send title "<red>제 2 시련" with subtitle "<red>모든 몬스터로부터 얻는 골드가 50%% 감소합니다" to loop-player for 1 seconds with fadein 1 second and fade out 1 second
+				set {defz::%{_map}%::playing::ordealcount::2} to true
+			if {_stage} = 11:
+				send title "<red>제 3 시련" with subtitle "<red>몬스터들의 받는 대미지가 5%% 감소합니다" to loop-player for 1 seconds with fadein 1 second and fade out 1 second
+				set {defz::%{_map}%::playing::ordealcount::3} to true
+			if {_stage} = 16:
+				send title "<red>제 4 시련" with subtitle "<red>몬스터들의 HP가 10%% 증가합니다" to loop-player for 1 seconds with fadein 1 second and fade out 1 second
+				set {defz::%{_map}%::playing::ordealcount::4} to true
+			if {_stage} = 21:
+				send title "<red>제 5 시련" with subtitle "<red>허기가 부여됩니다" to loop-player for 1 seconds with fadein 1 second and fade out 1 second
+				apply potion of hunger of tier 0 to loop-player for 9999 seconds
+every seconds:
+	loop {defz::maplist::*}:
+		if {defz::%loop-value%::playing::round} is set:
+			if {defz::%loop-value%::playing::round} != 30:
+				if {defz::%loop-value%::playing::playing} is true:
+					if {locking::%loop-value%::def} is not set:
+						checkmon(loop-value)
+			else:
+				if {defz::%loop-value%::playing::playing} is true:
+					clear {defz::%loop-value%::playing::monstercount}
+					loop all entities:
+						if "%loop-entity's world%" is "%loop-value-1%":
+							if loop-entity is not a player:
+								if loop-entity is not iron golem:
+									if loop-entity is not arrow:
+										add 1 to {defz::%loop-value-1%::playing::monstercount}
+										set {defzz.lock2} to true
+										wait 1 tick
+					clear {rankdef::*}
+					if {defz::%loop-value-1%::playing::monstercount} is not set:
+						if {defz::%loop-value-1%::ending} is not set:
+							set {defz::%loop-value-1%::ending} to true
+							loop all players:
+								if {mutereult::%loop-player%} is not set:
+									if {muteall::%loop-player%} is not set:
+										message "<yellow>=====RESULT=====" to loop-player
+										message "<light green>ZOMBIE SERVIVAL CLEAR!" to loop-player
+										message "<light green>PLAYER: %{defz::%loop-value-1%::playing::list::player::*}%" to loop-player
+										message "<light green>DIFFICULTY: %{defz::%loop-value-1%::dif}%" to loop-player
+										message "ROUND: %{defz::%loop-value-1%::playing::round}% [FINAL]" to loop-player
+										message "SCORE: %{defz::%loop-value-1%::playing::score}%" to loop-player
+										message "<yellow>================" to loop-player
+										clear {defz::upgrade::armorupgrade::%loop-player%}
+										clear {defz::upgrade::swordupgrade::%loop-player%}
+										clear {defz::upgrade::bowupgrade::%loop-player%}
+										clearplayermission(loop-player)
+										clear {defz::upgrade::weapon::%loop-player%}
+										clear {defz::upgrade::armor::%loop-player%}
+										clear {defz::coin::%loop-player%}
+										clear {defz::battery::%loop-player%::*}
+										set loop-player's max health to 10
+										set loop-player's health to loop-player's max health
+							clear {defzz.lock2}
+							clear {defz::%loop-value-1%::upgrade::*}
+							clear {defz::%loop-value-1%::coin::*}
+							wait 3 seconds
+							loop {defz::%loop-value-1%::playing::list::player::*}:
+								set {_pl} to "%loop-value-2%" parsed as offlineplayer
+								clear {_pl}'s inventory
+								clear {defz::upgrade::weapon::%{_pl}%}
+								clear {defz::upgrade::armor::%{_pl}%}
+								clear {defz::coin::%{_pl}%}
+								clear {defz::battery::%{_pl}%::*}
+								remove speed from {_pl}
+								remove hunger from {_pl}
+								remove poison from {_pl}
+								set {_pl}'s max health to 10
+								clear {defz::%{_pl}'s world%::skill::setting::*}
+								execute console command "/effect %{_pl}% clear"
+								set {_loc} to location at (0, 64, 0) in world "lobby"
+								teleport {_pl} to {_loc}
+							partyquit(loop-value-1)
+							zdloopend("defz::%loop-value-1%")
+							clear {defz.lock}
+							clear {defz::upgrade::abusewarn::*}
+							clear {defz::checkmission}
+							clear {defz::ending}
+							clear {defz::%loop-value-1%::playing::playing}
+on quit:
+	loop {defz::maplist::*}:
+		loop {defz::%loop-value%::playing::list::player::*}:
+			if "%player%" is loop-value-2:
+				set {defz::playing::quit::%player%} to true
+	if {defz::%player's world%::playing::playing} is set:
+		remove player from {defz::%player's world%::playing::count2::player::*}
+		set {defz::playing::loc::%player%} to player's location
+		if {defz::%player's world%::playing::count2::player::*} is not set:
+			zdend("%player's world%")
+
+on join:
+	wait 1 tick
+	teleport player to {lobby}
+	loop {defz::maplist::*}:
+		loop {defz::%loop-value%::playing::list::player::*}:
+			if {defz::%loop-value-1%::playing::playing} is true:
+				if {defz::%{_map}%::ending} is not set:
+					if "%player%" is loop-value-2:
+						if {defz::playing::loc::%player%} is set:
+							teleport player to {defz::playing::loc::%player%}
+							message "&a게임이 아직 플레이중입니다, 이전 위치로 텔레포트 합니다"
+							clear {defz::playing::quit::%player%}
+							stop
+	clear {defz::playing::loc::%player%}
+	message "&c이전 게임을 불러올 수 없습니다!"
+	clear player's inventory
+	clear {defz::upgrade::armorupgrade::%player%}
+	clear {defz::upgrade::swordupgrade::%player%}
+	clear {defz::upgrade::bowupgrade::%player%}
+	clearplayermission(player)
+	clear {defz::upgrade::weapon::%player%}
+	clear {defz::upgrade::armor::%player%}
+	clear {defz::coin::%player%}
+	clear {defz::battery::%player%::*}
+	clear {defz::playing::quit::%player%}
+	clear {defz::coin::%player%}
+
+on death:
+	if "kill%{defz::type::%victim's uuid%}%" is "kill처치대상":
+		loop all players:
+			if {defz::%loop-player's world%::playing::playing} is set:
+				loop {defz::mission::list::%loop-player%::*}:
+					if {defz::mission::if::%loop-player%::%loop-index%} is "kill처치대상":
+						missionclear(loop-player, loop-index)
+	if "protect%{defz::type::%victim's uuid%}%" is "protect보호대상":
+		loop all players:
+			if {defz::%loop-player's world%::playing::playing} is set:
+				loop {defz::mission::list::%loop-player%::*}:
+					if {defz::mission::if::%loop-player%::%loop-index%} is "protect보호대상":
+						if {defz::bugebd} is not set:
+							missionfail(loop-player, loop-index)
+	loop {defz::mission::if::%attacker%::*}:
+		if loop-value = "kill%{defz::type::%victim's uuid%}%":
+			add 1 to {defz::mission::value::%attacker%::%loop-index%}
+			if {defz::mission::max::%attacker%::%loop-index%} <= {defz::mission::value::%attacker%::%loop-index%}:
+				missionclear(attacker, loop-index)
+	if {defz::type::%victim's uuid%} is "&cALPHA" or "&cBETA":
+		stop
+	if {bug.%player%} is true:
+		set death message to ""
+		remove victim from {defz::%victim's world%::playing::count2::player::*}
+		set {defz::%victim's world%::playing::spect::%player%} to true
+		set death message to ""
+		if {defz::%victim's world%::playing::count2::player::*} is not set:
+			zdend("%victim's world%")
+	else:
+		if {defz::%victim's world%::playing::playing} is true:
+			if victim is not a player:
+				set {_xp} to 10 * (({defz::%victim's world%::playing::round} - 1) + 1)*(1+{prestige::defz::%attacker%::exp})
+				bind hologram "<gold><bold>+%{_xp}%" to victim for 0.75 seconds offset by -1, 1.5, 0
+				if attacker is a player:
+					xpadd(attacker, {_xp}, "monsterkill")
+				else if attacker is a golem:
+					xpadd({defz::golem::%attacker%}, {_xp}, "monsterkill")
+				if projectile is set:
+					set {_pl} to "%{projectile::%projectile's uuid%}%" parsed as player
+					zsdebug("%shooter%", "&a%{_pl}%")
+					set {_coin} to (100 + {prestige::defz::%shooter%::coin}) / 30 * (1 + ({defz::%victim's world%::playing::round} - 1)/10) * 20
+					loop {defz::%victim's world%::playing::list::player::*}:
+						zsdebug("%shooter%", "&c%loop-value%")
+						if loop-value is "%shooter%":
+							set {defz::coin::%loop-value%} to {_coin} + {defz::coin::%loop-value%}
+						else:
+							set {defz::coin::%loop-value%} to {_coin} / 10 + {defz::coin::%loop-value%}
+					if {defz::%victim's world%::playing::hardmode} is true:
+						add 15 to {defz::%victim's world%::playing::score}
+					else:
+						add 10 to {defz::%victim's world%::playing::score}
+					bind hologram "<light green><bold>+%{_coin}%" to victim for 0.75 seconds offset by 1, 1.5, 0
+					loop {projectile::*}:
+						if loop-value is {_pl}:
+							clear {projectile::%loop-index%}
+							message "%loop-index% - %{projectile::%loop-index%}%"
+				else if attacker is a golem:
+					if {defz::%victim's world%::playing::ordealcount::2} is true:
+						set {_coin} to (100 + {prestige::defz::%{defz::golem::%attacker%}%::coin}) / 100 * (1 + ({defz::%victim's world%::playing::round} - 1)/10) * 20
+						loop {defz::%victim's world%::playing::list::player::*}:
+							if loop-value is "%{defz::golem::%attacker%}%":
+								set {defz::coin::%loop-value%} to {_coin} + {defz::coin::%loop-value%}
+								
+							else:
+								set {defz::coin::%loop-value%} to {_coin} / 10 + {defz::coin::%loop-value%}
+						if {defz::playing::hardmode} is true:
+							add 3.75 to {defz::%victim's world%::playing::score}
+						else:
+							add 2.5 to {defz::%victim's world%::playing::score}
+						bind hologram "<light green><bold>+%{_coin}%" to victim for 0.75 seconds offset by 1, 1.5, 0
+					else:
+						set {_coin} to (100 + {prestige::defz::%{defz::golem::%attacker%}%::coin}) / 100 * (1 + ({defz::%victim's world%::playing::round} - 1)/10) * 20
+						loop {defz::%victim's world%::playing::list::player::*}:
+							if loop-value is "%{defz::golem::%attacker%}%":
+								add {_coin} to {defz::coin::%loop-value%}
+								loop {defz::mission::if::%loop-value%::*}:
+									if loop-value-2 = "kill%{defz::type::%victim's uuid%}%":
+										add 1 to {defz::mission::value::%loop-value-1%::%loop-index-2%}
+										if {defz::mission::max::%loop-value-1%::%loop-index-2%} <= {defz::mission::value::%loop-value-1%::%loop-index-2%}:
+											set {_pl} to "%loop-value-1%" parsed as player
+											missionclear({_pl}, loop-index-2)
+							else:
+								add {_coin} / 10 to {defz::coin::%loop-value%}
+						if {defz::%victim's world%::playing::hardmode} is true:
+							add 3.75 to {defz::%victim's world%::playing::score}
+						else:
+							add 2.5 to {defz::%victim's world%::playing::score}
+						bind hologram "<light green><bold>+%{_coin}%" to victim for 0.75 seconds offset by 1, 1.5, 0
+				else if attacker is a player:
+					if {defz::%victim's world%::playing::ordealcount::2} is true:
+						set {_coin} to (100 + {prestige::defz::%attacker%::coin}) / 100 * (1 + ({defz::%victim's world%::playing::round} - 1)/10) * 10
+						loop {defz::%victim's world%::playing::list::player::*}:
+							zsdebug("%attacker%", "&c%loop-value%")
+							if loop-value is "%attacker%":
+								set {defz::coin::%loop-value%} to {_coin} + {defz::coin::%loop-value%}
+								
+							else:
+								set {defz::coin::%loop-value%} to {_coin} / 10 + {defz::coin::%loop-value%}
+						if {defz::playing::hardmode} is true:
+							add 7.5 to {defz::%victim's world%::playing::score}
+						else:
+							add 5 to {defz::%victim's world%::playing::score}
+						bind hologram "<light green><bold>+%{_coin}%" to victim for 0.75 seconds offset by 1, 1.5, 0
+					else:
+						set {_coin} to (100 + {prestige::defz::%attacker%::coin}) / 100 * (1 + ({defz::%victim's world%::playing::round} - 1)/10) * 20
+						loop {defz::%attacker's world%::playing::list::player::*}:
+							zsdebug("%attacker%", "&c%loop-value%")
+							set {_pl1} to loop-value
+							if {_pl1} is "%attacker%":
+								set {_k} to {_coin} + {defz::coin::%{_pl1}%}
+								set {defz::coin::%{_pl1}%} to {_k}
+							else:
+								set {_k} to {_coin}/10 + {defz::coin::%{_pl1}%}
+								set {defz::coin::%{_pl1}%} to {_k}
+						if {defz::%victim's world%::playing::hardmode} is true:
+							add 7.5 to {defz::%victim's world%::playing::score}
+						else:
+							add 5 to {defz::%victim's world%::playing::score}
+						bind hologram "<light green><bold>+%{_coin}%" to victim for 0.75 seconds offset by 1, 1.5, 0
+					if {defz::%attacker's world%::skill::setting::%attacker%} is "meta1":
+						if {defz::mana::%attacker%} is not set:
+							set {defz::mana::%attacker%} to 0
+						if {defz::mana::%attacker%} + 5 > 100:
+							set {defz::mana::%attacker%} to 100
+						else:
+							set {defz::mana::%attacker%} to {defz::mana::%attacker%} + 5
+on shoot:
+	set {projectile::%projectile's uuid%} to shooter's uuid
+	wait 5 seconds
+	clear {projectile::%projectile's uuid%}
+
+every seconds:
+	loop all players:
+		set {defz::%loop-player's world%::playing::number::player} to number of {defz::%loop-player's world%::playing::count2::player::*}
+		if {defz::%loop-player's world%::playing::playing} is set:
+			if {defz::%loop-player's world%::playing::spect::%loop-player%} is not set:
+				add 1 to {defz::playing::afk::%loop-player%}
+			if {defz::%loop-player's world%::playing::spect::%loop-player%} > 120:
+				set health of loop-player to 0
+				set {afkdeath.%loop-player%} to true
+	loop all players:
+		if {defz::%loop-player's world%::playing::spect::%loop-player%} is true:
+			if {defz::%loop-player's world%::playing::playing} is true:
+				set gamemode of loop-player to spectator
+				apply potion of night vision of tier 20 to loop-player for 9999 days
+			loop all players:
+				if {defz::%loop-player-2's world%::playing::playing} is true:
+					reveal loop-player-2 from loop-player-1
+				else:
+					hide loop-player-2 from loop-player-1
+		if {defz::%loop-player's world%::playing::playing} is not true:
+			clear {defz::%loop-player's world%::playing::spect::%loop-player%}
+
+on any movement:
+	clear {defz::playing::afk::%player%}
+on explode:
+	loop exploded blocks:
+		if {defz::%loop-value's world%::playing::playing} is true:
+			if loop-value != white wool:
+				set {_e::%location of loop-value%} to true
+				set {_e::%location of loop-value%::*} to location of loop-value and type of loop-value
+	wait 1 tick
+	loop {_e::*}:
+		set block at {_e::%loop-index%::1} to {_e::%loop-index%::2}
+on place:
+	if {defz::%player's world%::playing::playing} is true:
+		if block's y-coordinate > 17:
+			cancel event
+
+on break:
+	if {defz::%player's world%::playing::playing} is true:
+		if {defz::explosionlocate::%location of block%} is not true:
+			cancel event
+every seconds:
+	loop {defz::maplist::*}:
+		set {_w} to "%loop-value%" parsed as world
+		loop all entities:
+			if "%loop-entity's world%" = "%{_w}%":
+				if block Below loop-entity is barrier:
+					if {defz::%loop-entity's world%::playing::spect::%loop-entity%} is not set:
+						if {defz::%loop-entity's world%::playing::playing} is true:
+							if loop-entity's y-coordinate > 3:
+								set {bug.%loop-entity%} to true
+								set health of loop-entity to 0
+		loop all entities:
+			if loop-entity's world = {_w}:
+				if loop-entity is iron golem:
+					if loop-entity's target is not set:
+						loop all entities in radius 5 around loop-entity:
+							if loop-entity-2 is monster:
+								set loop-entity-1's target to loop-entity-2
+								set the loop-entity-1's walk speed to 0.5
+								exit 1 loop
+					if loop-entity's target is not set:
+						loop all entities:
+							if loop-entity-2's world = {_w}:
+								if loop-entity-2 is monster:
+
+									if defmoncheck(loop-entity-2) is true:
+										set loop-entity-1's target to loop-entity-2
+										set the loop-entity-1's walk speed to 0.5
+										exit 1 loop
+									else:
+										if {defz::%loop-entity-1's world%::skill::setting::%{defz::golem::%loop-entity-1%}%} is "meta2":
+											set {_dmg} to 2 * getDMG({defz::golem::%loop-entity-1%}, loop-entity-1) * (1+{prestige::defz::%{defz::golem::%loop-entity-1%}%::atkgolem})
+										else:
+											set {_dmg} to getDMG({defz::golem::%loop-entity-1%}, loop-entity-1) * (1+{prestige::defz::%{defz::golem::%loop-entity-1%}%::atkgolem})
+										if {_dmg} < loop-entity-2's health:
+											set loop-entity-1's target to loop-entity-2
+											set the loop-entity-1's walk speed to 0.5
+											exit 1 loop
+										else:
+											exit 1 loop
+				else if loop-entity is wolf:
+					if loop-entity's target is not set:
+						if {defz::tameset::%{defz::wolfown::%loop-entity's uuid%}%} is not set:
+							loop all entities:
+								if loop-entity-2's world = {_w}:
+									if loop-entity-2 is monster:
+										set loop-entity-1's target to loop-entity-2
+										exit 1 loop
+						else:
+							loop entities in radius 9 around {defz::wolfown::%loop-entity's uuid%}'s location:
+								if loop-entity-2 is monster:
+									set loop-entity-1's target to loop-entity-2
+									exit 1 loop
+function defmoncheck(en: entity) :: boolean:
+	loop all entities:
+		if loop-entity's world is {_en}'s world:
+			if loop-entity is iron golem:
+				if loop-entity's target is {_en}:
+					loop all entities:
+						if loop-entity-2's world is {_en}'s world:
+							if loop-entity-2 is iron golem:
+								if loop-entity-2's target is {_en}:
+									if loop-entity-2 != loop-entity-1:
+										return false
+	return true
+
+function GolemProtectOwner(pl: player):
+	loop all entities:
+		if loop-entity's world = {_pl}'s world:
+			if loop-entity is iron golem:
+				if {defz::golem::%loop-entity%} is {_pl}:
+					add loop-entity to {_loop1::*}
+	loop all entities:
+		if loop-entity's world = {_pl}'s world:
+			if loop-entity is monster:
+				if loop-entity's target is {_pl}:
+					message "detection!" to {_pl}
+					loop {_loop1::*}:
+						set {_en} to "%loop-value-2%" parsed as entity
+						set {_dis} to distance between loop-entity-1 and {_en}
+						if {_dis1} is not set:
+							set {_dis1} to {_dis}
+							set {_en1} to {_en}
+						else:
+							if {_dis} < {_dis1}:
+								set {_dis1} to {_dis}
+								set {_en1} to {_en}
+				if {_en1} is set:
+					set {_en1}'s target to loop-entity-1
+
+command /좀비서바이벌 [<text>] [<player>]:
+	aliases: /zs
+	trigger:
+		if 1 is 2:
+			if {defz::party::member::%{defz::party::inpt::%player%}%::*} is not set:
+				clear {defz::party::inpt::%player%}
+			if arg-1 is "참가" or "join":
+				if arg-2 is set:
+					loop all players:
+						if {defz::party::member::%loop-player%::*} contain player:
+							message "<light red>당신은 다른 파티에 있습니다."
+							stop trigger
+					if {defz::party::owner::%arg-2%} is true:
+						add player to {defz::party::member::%arg-2%::*}
+						set {defz::party::inpt::%player%} to arg-2
+						loop all players:
+							loop {defz::party::member::%arg-2%::*}:
+								if loop-value-2 is loop-player-1:
+									message "<light green>%player%님이 파티에서 참가하였습니다.(현재 인원: %number of {defz::party::member::%{defz::party::inpt::%player%}%::*}%)" to loop-player-1
+						message "<light green>파티에 참가하였습니다"
+						stop trigger
+			else if arg-1 is "생성" or "create":
+				if {defz::party::inpt::%player%} is not set:
+					add player to {defz::party::member::%player%::*}
+					message "<light green>파티에 참가하였습니다"
+					set {defz::party::owner::%player%} to true
+					set {defz::party::inpt::%player%} to player
+				else:
+					message "<light red>당신은 다른 파티에 있습니다."
+			else if arg-1 is "나가기" or "leave":
+				if {defz::party::owner::%player%} is true:
+					remove player from {defz::party::member::%player%::*}
+					message "<light red>파티장이 파티를 떠나 파티가 해산되었습니다" to player
+					clear {defz::party::inpt::%player%}
+					loop all players:
+						if {defz::party::inpt::%loop-player%} is player:
+							message "<light red>파티장이 파티를 떠나 파티가 해산되었습니다" to loop-player
+							clear {defz::party::inpt::%loop-player%}
+						clear {defz::party::member::%player%::*}
+						clear {defz::party::owner::%player%}
+				else:
+					if {defz::party::member::%{defz::party::inpt::%player%}%::*} contain player:
+						remove player from {defz::party::member::%{defz::party::inpt::%player%}%::*}
+						message "<light red>파티에서 나갔습니다."
+						loop all players:
+							loop {defz::party::member::%{defz::party::inpt::%player%}%::*}:
+								if loop-value-2 is loop-player-1:
+									message "<light red>%player%님이 파티에서 나갔습니다.(현재 인원: %number of {defz::party::member::%{defz::party::inpt::%player%}%::*}%)" to loop-player
+						clear {defz::party::inpt::%player%}
+			else if arg-1 is "시작" or "start":
+				loop {defz::party::member::%{defz::party::inpt::%player%}%::*}:
+					set {_pl1} to "%loop-value%" parsed as player
+					if {defz::%{_pl1}'s world%::playing::playing} is true:
+						message "&c명령어 실행전 모든 플레이어가 게임 플레이를 하지 않는지 확인해주세요"
+						stop
+				if {defz::party::owner::%player%} is true:
+					zsdif(player)
+				else:
+					message "<light red>당신은 파티가 없거나 파티장이 아닙니다!"
+			else if arg-1 is "TEST":
+				if {defz::party::owner::%player%} is true:
+					zdmapselect("TEST", player)
+				else:
+					message "<light red>당신은 파티가 없거나 파티장이 아닙니다!"
+			else if arg-1 is "옵션" or "option":
+				zsoption(player)
+			else if arg-1 is "관전" or "spect":
+				loop {defz::maplist::*} :
+					if {defz::%loop-value%::playing::playing} is true:
+						if {_int1} is not set: 
+							set metadata tag "DEF_OBSERVER" of player to chest inventory with 5 rows named "관전"
+							open (metadata tag "DEF_OBSERVER" of player) to player
+							set {_int1} to -1
+						add 1 to {_int1}
+						set slot {_int1} of metadata tag "DEF_OBSERVER" of player to grass block named "<reset>%loop-value%" with lore "<reset><light blue>클릭하면 이동합니다" and "<magenta>MAP: %loop-value%"
+				if {_int1} is not set:
+					message "&c관전할 맵이 없습니다!"
+			else if arg-1 is "addmap":
+				add "%player's world%" to {defz::maplist::*}
+				message "&aDone..."
+			else if arg-1 is "addmaphard":
+				add "%player's world%" to {defz::maplist::*}
+				set {defz::map::hard::%player's world%} to true 
+				message "&aDone..."
+			else if arg-1 is "resmap":
+				clear {defz::maplist::*} 
+				clear {defz::maplisthard::*}
+				message "&aDone..."
+			else if arg-1 is "prestige" or "프레스티지":
+				prestige(player)
+			else:
+				message "<gold>============<light red>ZOMBIE SURVIVAL<gold>============"
+				message "<light blue><> - 대체, [] - 선택"
+				message "<light blue>/좀비서바이벌 생성<create> - 파티를 만듭니다"
+				message "<light blue>/좀비서바이벌 참가<join> [파티장 이름] - 파티를 참가합니다"
+				message "<light blue>/좀비서바이벌 시작<start> [normal,hard] - 게임을 시작합니다" 
+				message "<light blue>/좀비서바이벌 관전<spect> - 진행중인 게임 관전합니다"
+				message "<light blue>/좀비서바이벌 나가기<leave> - 현재 있는 팀을 나갑니다"
+				message "<light blue>/좀비서바이벌 옵션<option> - 옵션을 확인합니다"
+				message "<gold>======================================="
+			
+on inventory click:
+	if event-inventory = (metadata tag "DEF_OBSERVER" of player):
+		cancel event
+		set {_loc} to location at (-9, 13, 22) in world name of clicked item parsed as world
+		teleport player to {_loc}
+		set {defz::%name of clicked item%::playing::spect::%player%} to true
+
+command /setround [<integer>]:
+	permission : admin.use
+	trigger:
+		if player is "Perdume":
+			set {defz::%player's world%::playing::round} to arg-1
+
+every 0.5 seconds:
+	loop {defz::party::member::*}:
+		loop {defz::party::member::%loop-index%::*}:
+			set {_a} to loop-value-2
+			set {_aa::*} to {defz::party::member::%loop-index-1%::*}
+			if zdis({_aa::*}, {_a}) is true:
+				remove loop-value-2 from {defz::party::member::%loop-index-1%::*}
+
+on rightclick:
+	if block is set:
+		if name of tool of player is "골렘스폰알":
+			cancel event
+			remove 1 wolf spawn egg from the player
+			set {_loc} to location at (block's x-coordinate, block's y-coordinate + 1, block's z-coordinate) in world "%player's world%" parsed as world
+			spawn iron golem at {_loc}
+			set last spawned entity's max health to ((({defz::%player's world%::playing::round}-1)^2.25)*(600/625) + 400) / 8
+			set last spawned entity's health to last spawned entity's max health
+			apply potion of speed of tier 1 to last spawned entity for 99999999999 seconds
+			set {defz::golem::%last spawned entity%} to player
+			set {defz::type::%last spawned entity's uuid%} to "골렘"
+
+			
+
+on consume:
+	if type of player's offhand tool is golden apple:
+		cancel event
+on rightclick:
+	if {defz::%player's world%::playing::playing} is true:
+		if type of player's tool is golden apple:
+			cancel event
+			if {setting::defz::%player%::health} + 10 <= {setting::defz::%player%::maxhealth}:
+				add 10 to {setting::defz::%player%::health}
+				set player's health to 10 * {setting::defz::%player%::health} / {setting::defz::%player%::maxhealth}
+			else:	
+				set {setting::defz::%player%::health} to {setting::defz::%player%::maxhealth}
+				set player's health to 10 * {setting::defz::%player%::health} / {setting::defz::%player%::maxhealth}
+			remove 1 golden apple from the player
+			loop {defz::mission::if::%player%::*}:
+				if {defz::mission::if::%player%::%loop-index%} is "donteatAPPLE":
+					add 1 to {defz::mission::value::%player%::%loop-index%}
+					if {defz::mission::value::%player%::%loop-index%} >=5:
+						missionfail(player, loop-index)
+
+
+command /setlobby:
+	permission: admin.use
+	trigger:
+		if player is op:
+			set {lobby} to player's location
+on entity target: 
+	if entity's target is monster:
+		if entity is not iron golem:
+			if entity's target's world is "%entity's target's world %":
+				cancel event
+
+function damage(pl: player, dmg: number, i1: integer, i2: integer) :: number:
+	if {_i1} is not set:
+		set {_tought} to 0
+		set {_dfp} to 0
+	if {_i1} is 0:
+		set {_tought} to 0
+		set {_dfp} to 0
+	else if {_i1} is 1:
+		set {_tought} to 0
+		set {_dfp} to 7
+	else if {_i1} is 2:
+		set {_tought} to 0
+		set {_dfp} to 11
+	else if {_i1} is 3:
+		set {_tought} to 0
+		set {_dfp} to 12
+	else if {_i1} is 4:
+		set {_tought} to 0
+		set {_dfp} to 15
+	else if {_i1} is 5:
+		set {_tought} to 8
+		set {_dfp} to 20
+	else if {_i1} is 6:
+		set {_tought} to 12
+		set {_dfp} to 20
+	set {_res} to max({_dfp} / 5, {_dfp} - {_dmg} / ( {_tought} / 4 + 2 ))
+	set {_res01} to min({_res}, 20)
+	set {_vdmg} to {_dmg} * (1 - {_res01} / 25)
+	if {_i2} is set:
+		set {_res1} to {_vdmg} * ( 1 - {_i2} / 101)
+	else:
+		set {_res1} to {_vdmg}
+	return {_res1}
+	
+on damage:
+	if victim is a player:
+		if {defz::%victim's world%::playing::playing} is true:
+			if {defz::pause} is true:
+				cancel event
+				damage attacker by damage ^ damage
+				stop
+			if victim have resistance:
+				set {_tier} to {_p::2} parsed as integer
+				set damage to damage * ((100 - 20 * ({_tier} + 1)) / 100)
+			if {setting::defz::%victim%::health} > 0:
+				if attacker is monster:
+					set damage to damage * (7 + {def::%victim's world%::playing::round}) / 8
+					set damage to damage * (100 - {defz::defdmgdown::%victim%}) / 100
+					if {defz::playing::ordealcount::1} is true:
+						set damage to damage * 5 / 4
+				set {_q} to damage(victim, damage, {defz::upgrade::armor::%victim%}, {defz::upgrade::armorupgrade::%victim%})
+				set {_asdasd} to {_q} * ( 1 - ({prestige::defz::%victim%::defend} / 100))
+				subtract {_asdasd} from {setting::defz::%victim%::health}
+				if {setting::defz::%victim%::health} > 0:
+					set victim's health to {setting::defz::%victim%::health} / {setting::defz::%victim%::maxhealth} * 10
+					set damage to 0
+				else:
+					if {defz::%victim's world%::playing::spect::%victim%} is not set:
+						if {defz::%victim's world%::dif} is "TEST":
+							set {defz::life::%victim%} to 2
+						zsdebug("%victim%", "Life: %{defz::life::%victim%}%")
+						subtract 1 from {defz::life::%victim%}
+						if {defz::life::%victim%} = 0:
+							clearplayermission(victim)
+							remove victim from {defz::%victim's world%::playing::count2::player::*}
+							set {defz::%victim's world%::playing::spect::%victim%} to true
+							if {defz::%victim's world%::playing::count2::player::*} is not set:
+								zdend("%victim's world%")
+						else:
+							cancel event
+							set victim's health to 20
+							set {setting::defz::%victim%::health} to 1
+							set victim's gamemode to spectator
+							loop 3 times:
+								send title "&c부상당했습니다" with subtitle "&c%4 - loop-number%초 후에 소생됩니다" to victim for 1 seconds with fadein 0 second and fade out 0 second
+								wait 1 seconds
+						set {_loc} to location at (-9, 13, 22) in world "%victim's world%" parsed as world
+						teleport victim to {_loc}
+						set {defz::playing::ignore::%victim%} to true
+						set victim's gamemode to adventure
+						set {setting::defz::%victim%::health} to {setting::defz::%victim%::maxhealth}
+						wait 3 seconds
+						clear {defz::playing::ignore::%victim%}
+						stop
+					
+command /pause:
+	permission: admin.use
+	trigger:
+		if {defz::pause} is true:
+			clear {defz::pause}
+		else:
+			set {defz::pause} to true
+			
+every seconds:
+	loop {defz::maplist::*}:
+		if {defz::%loop-value%::playing::playing} is true:
+			clear {_va1}
+			loop all entities:
+				if loop-entity's world is loop-value-1:
+					if loop-entity is iron golem:
+						add 1 to {_va1}
+			set {defz::%loop-value-1%::playing::golemcount} to {_va1}
+
+on damage:
+	{defz::%victim's world%::playing::playing} is true
+	if attacker is a player:
+		if victim is iron golem:
+			cancel event
+	set {_dmg1} to damage
+	if attacker is monster:
+		if victim is iron golem:
+			if {defz::%victim's world%::playing::playing} is true:
+				set damage to damage * (7 + {def::%victim's world%::playing::round}) / 8
+				set damage to damage * (100 - {defz::defdmgdown::%victim%}) / 100
+				if {defz::playing::ordealcount::1} is true:
+					set damage to damage * 5 / 4
+	if attacker is iron golem:
+		if victim is monster:	
+			set damage to getDMG({defz::golem::%attacker%}, victim)
+	if attacker is a wolf:
+		if victim is not a player:
+			set damage to 100000
+	if victim is monster:
+		if {defz::%victim's world%::playing::playing} is true:
+			if attacker is monster:
+				cancel event
+	if attacker is a player:
+		if victim is monster:
+			if attacker's tool is a sword:
+				set damage to getDMG(attacker, victim)
+				if {defz::playing::ordealcount::3} is true:
+					set victim's health to victim's health + damage * 1 / 20
+				if {defz::%attacker's world%::skill::setting::%attacker%} is "meta1":
+					set damage to damage * (101 - {defz::mana::%attacker%}) / 100
+	if projectile is set:
+		zsdebug("%shooter%", "!")
+		if shooter is a player:
+			if victim is monster:
+				if attacker's tool is a bow:
+					set damage to getDMGBOW(shooter, victim) * 3
+					if {defz::playing::ordealcount::3} is true:
+						set victim's health to victim's health + damage * 1 / 20
+					if {defz::%attacker's world%::skill::setting::%attacker%} is "meta1":
+						set damage to damage * (101 - {defz::mana::%attacker%}) / 100
+			else if victim is iron golem:
+				if {defz::%victim's world%::playing::playing} is true:
+					cancel event
+	if attacker is not set:
+		if victim is iron golem:
+			zsdebug("%{defz::golem::%victim%}%", "%damage cause%")
+			if damage cause is not burning:
+				if damage cause is not unknown:
+					if {defz::%victim's world%::playing::playing} is true:
+						while {_setLoc} is not set:
+							set {_POSITION::RANDOM} to location at (random integer between -36 and 22, 4, random integer between -5 and 52) in world "%victim's world%" parsed as world
+							loop blocks above {_POSITION::RANDOM}:
+								if loop-block and block above loop-block are air:
+									if block under loop-block is not air or water or lava or void air:
+										if loop-block's y-coordinate < 20.5:
+											set {_POSITION::RANDOM} to location of loop-block
+											set {_en} to {_en} parsed as entity type
+											teleport victim at {_POSITION::RANDOM}
+											set {_setLoc} to true
+	if attacker is a player:
+		if {defz::%victim's world%::playing::playing} is true:
+			repair tool of attacker
+			repair tool of attacker
+	if {defz::%victim's world%::playing::playing} is true:
+		repair helmet of victim
+		repair chestplate of victim
+		repair leggings of victim
+		repair boots of victim
+		if victim is not a player:
+			wait 1 tick
+			set the victim's display name to "<dark gray>%{defz::type::%victim's uuid%}% / <reset>%victim's health* 2%&c<bold>♡, <reset>&c[%victim's health/victim's max health * 100%%%]"
+	if attacker is cave spider:
+		if victim is player:
+			if {defz::%victim's world%::playing::playing} is true:
+				apply potion of poison of tier 1 to victim for 2 seconds
+	if attacker is husk:
+		if victim is player:
+			if {defz::%victim's world%::playing::playing} is true:
+				apply potion of hunger of tier 0 to victim for 30 seconds
+	if {BOSS::%attacker%} is true:
+		if victim is player:
+			if {defz::%victim's world%::playing::playing} is true:
+				apply potion of instant damage of tier 1 to victim for 1 tick
+				apply potion of hunger of tier 2 to victim for 20 seconds
+				apply potion of poison of tier 1 to victim for 60 tick
+		else if "%victim%" is "iron golem":
+			damage victim by damage * 0.5
+	set {whoattack::%victim%} to "%attacker%"
+	if {BOSS::%victim%} is true:
+		cancel event
+		subtract damage from victim's health
+	wait 10 seconds
+	if {whoattack::%victim%} is "%attacker%":
+		clear {whoattack::%victim%}
+		
+on entity target:
+	if {defz::playing::ignore::%event-entity's target%} is true:
+		cancel event
+
+every seconds:
+	clear {defz::checkplayer}
+	loop all players:
+		if {defz::%loop-player's world%::playing::playing} is true:
+			if {defz::%loop-player's world%::playing::spect::%loop-player%} is not set:
+				add 1 to {defz::checkplayer}
+			set {defz::defdmgdown::%loop-player%} to 0
+			if loop-player's food level <= 8:
+				apply potion of mining fatigue of tier 2 to loop-player for 1 seconds
+			else:
+				remove mining fatigue from loop-player
+			if loop-player's food level <= 6:
+				apply potion of slowness of tier 2 to loop-player for 1 seconds
+			else:
+				remove slowness from loop-player
+			if loop-player's food level <= 4:
+				apply potion of blindness of tier 2 to loop-player for 100 seconds
+			else:
+				if {defz::battery::%loop-player%::value} != 0:
+					if {defz::battery::%loop-player%::blicount} <= {defz::battery::%loop-player%::maxcount}:
+						remove blindness from loop-player
+			if loop-player's food level <= 3:
+				damage loop-player by 0.05 * {setting::defz::%loop-player%::maxhealth} + 0.2 * {defz::upgrade::armor::%loop-player%} + 1 * {defz::upgrade::armorupgrade::%loop-player%}
+on death:
+	clear {BOSS::%victim%}
+
+on drop:
+	if {defz::%player's world%::playing::playing} is true:
+		if item is not a helmet:
+			if item is not a chestplate:
+				if item is not a leggings:
+					if item is not a boots:
+						if item is not a sword:
+							if item is not a book:
+								if item is not a bow:
+									stop
+		cancel event
+
+on inventory click:
+	if {defz::%player's world%::playing::playing} is true:
+		clicked slot is 39:
+			cancel event
+		clicked slot is 38:
+			cancel event
+		clicked slot is 37:
+			cancel event
+		clicked slot is 36:
+			cancel event
+
+command /asda:
+	permission: admin.use
+	trigger:
+		zdend("%player's world%")
+
+
+command /loopstart:
+	permission: admin.use
+	trigger:
+		while true:
+			add 1 to {_asdf}
+			chance of 0.001%:
+				send "Successful! %{_asdf}%"
+				stop
+
+on join:
+	apply potion of night vision of tier 20 to player for 9999 days

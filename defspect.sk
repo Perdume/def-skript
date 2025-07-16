@@ -1,0 +1,25 @@
+function fill(loc: location, block: itemtype, repblock: itemtype, undblock: itemtype):
+    loop blocks in radius 1 around {_loc}:
+        if loop-block is {_repblock}:
+            set loop-block to {_block}
+            if block Below loop-block is {_undblock}:
+                set loop-block to barrier
+            wait 1 tick
+            fill(location of loop-block, {_block}, {_repblock}, {_undblock})
+
+function fill2(loc: location, block: itemtype, repblock: itemtype):
+    loop blocks in radius 1 around {_loc}:
+        if loop-block is {_repblock}:
+            set loop-block to {_block}
+            wait 1 tick
+            fill2(location of loop-block, {_block}, {_repblock})
+
+command /bae [<itemtype>]:
+    permission: admin.use
+    trigger:
+        set {_loc} to location of player
+        fill({_loc}, light green stained clay, air, arg-1)
+        wait a second
+        broadcast "Recovering"
+        fill2({_loc}, air, light green stained clay)
+        broadcast "Just moment"

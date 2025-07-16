@@ -1,0 +1,360 @@
+on right click:
+	if {defz::%player's world%::playing::playing} is set:
+		if {option::defz::%player%::giveskillbook} is set:
+			if item is a book named "<purple>스킬":
+				defskill(player)
+		else:
+			if item is a sword:
+				defskill(player)
+
+function defskill(pl: player):
+	if {defz::%{_pl}'s world%::skill::setting::%{_pl}%} is "meta1":
+		if {defz::mana::%{_pl}%} >= 15:
+			set {defz::mana::%{_pl}%} to {defz::mana::%{_pl}%} - 15
+			loop all entities:
+				if loop-entity's world is {_pl}'s world:
+					if loop-entity is a monster:
+						add 1 to {_task}
+			loop all entities:
+				if loop-entity's world is {_pl}'s world:
+					if loop-entity is a monster:
+						W4sk1({_pl}, loop-entity, {_task})
+		else:
+			message "&c%15 - {defz::mana::%{_pl}%}%&c마나가 필요합니다" to {_pl}
+	if {defz::%{_pl}'s world%::skill::setting::%{_pl}%} is "atk":
+		atkskill({_pl})
+	if {defz::%{_pl}'s world%::skill::setting::%{_pl}%} is "hp":
+		set {_waited} to difference between {defz::skill::waiting::%{_pl}%} and now
+		set {_rem} to difference between 30 seconds and {_waited}
+		set {_ren11} to "%{_rem}%"
+		replace all " seconds" with "s" in {_ren11}
+		if {_waited} is less than 30 seconds:
+			message "&c쿨타임이 %{_ren11}%&c 남았습니다" to {_pl}
+		else:
+			set {defz::skill::waiting::%{_pl}%} to now
+			message "&a스킬을 사용했습니다" to {_pl}
+			loop 5 times:
+				wait 1 seconds
+				loop all players in radius 5 around location of {_pl}:
+					if {defz::playing::spect::%loop-player%} is not set:
+						if loop-player is not {_pl}:
+							set {_perhealth} to {setting::defz::%loop-player%::maxhealth} / 10
+							set {setting::defz::%loop-player%::health} to {_perhealth} + {setting::defz::%loop-player%::health}
+						else:
+							set {_perhealth} to {setting::defz::%loop-player%::maxhealth} / 20
+							set {setting::defz::%loop-player%::health} to {_perhealth} + {setting::defz::%loop-player%::health}
+						set loop-player's health to {setting::defz::%loop-player%::health} / {setting::defz::%loop-player%::maxhealth} * 10
+	if {defz::%{_pl}'s world%::skill::setting::%{_pl}%} is "kill":
+		set {_waited} to difference between {defz::skill::waiting::%{_pl}%} and now
+		set {_rem} to difference between 15 seconds and {_waited}
+		set {_ren11} to "%{_rem}%"
+		replace all " seconds" with "s" in {_ren11}
+		if {_waited} is less than 15 seconds:
+			message "&c쿨타임이 %{_ren11}%&c 남았습니다" to {_pl}
+		else:
+			message "&a스킬을 사용했습니다" to {_pl}
+			while {_setLoc} is not set:
+				add 1 to {_looptime}
+				if {_looptime} > 1000:
+					set {_setLoc} to true
+					message "&acancel" to {_pl}
+				set {_POSITION::RANDOM} to location at (random integer between -36 and 22, 4, random integer between -5 and 52) in world "%{_pl}'s world%" parsed as world
+				loop blocks above {_POSITION::RANDOM}:
+					if loop-block and block above loop-block are air:
+						if block under loop-block is not air or water or lava or void air:
+							if loop-block's y-coordinate < 20.5:
+								set {_POSITION::RANDOM} to location of loop-block
+								loop entities in radius 3 around {_POSITION::RANDOM}:
+									if loop-entity is not {_pl}:
+										if loop-entity is monster:
+											set {_loc2} to loop-entity's location
+											set {_aosked} to true
+								if {_aosked} is true:
+									teleport {_pl} to {_POSITION::RANDOM}
+									set {_setLoc} to true
+									set {_dir} to {_loc2}'s vector.subtract({_pl}.toVector())
+									{_pl}.setDirection({_dir})
+									loop all entities:
+										if loop-entity's target is {_pl}:
+											clear loop-entity's target
+											delete loop-entity's target
+									wait 1 tick
+									loop all entities:
+										if loop-entity's target is {_pl}:
+											clear loop-entity's target
+									if {defz::skill::killcool::%{_pl}%} <= 0:
+										if {defz::skill::killcool::%{_pl}%}+10 < 15:
+											add 10 to {defz::skill::killcool::%{_pl}%}
+										else:
+											set {defz::skill::killcool::%{_pl}%} to 15
+									if {defz::skill::killcool::%{_pl}%} is not set:
+										set {defz::skill::killcool::%{_pl}%} to 10
+									set {defz::skill::waiting::%{_pl}%} to now
+									exit 1 loop
+							else:
+								exit 1 loop
+	loop all items in {_pl}'s inventory:
+		loop-item is a book named "<purple>메타선택"
+		remove loop-item from {_pl}'s inventory
+		close {_pl}'s inventory
+	
+function locToLoc(e:location,loc2:location, num:integer) :: location:
+    set {_loc} to {_e}'s location
+    set {_dir} to {_loc2}'s vector.subtract({_e}.getLocation().toVector())
+    {_loc}.setDirection({_dir})
+    return {_loc}
+
+function W4sk1(sht: player, lock: entity, num: integer):
+	loop 1 times:
+		if {_sht}'s health <= 0:
+			stop
+		set {_b} to {_sht}'s head location
+		set {_b} to location 0.2 meter infront of {_b}
+		#정확도
+		add random number between -0 and 0 to {_b}'s pitch
+		add random number between -0 and 0 to {_b}'s yaw
+		set {_u} to 0
+		while {_lock}'s health > 0:
+			wait 1 tick
+			add 1 to {_h}
+			set {_loc2} to {_lock}'s location
+			set {_dir} to {_loc2}'s vector.subtract({_b}.toVector())
+			{_b}.setDirection({_dir})
+			if {_b} is set:
+				add 1 to {_u}
+				if {_u} > 3:
+					show 5 black colored dust with speed 0.001 at {_b}
+				set {_b} to location 0.3 meter infront of {_b}
+				set {_b}'s y-coordinate to {_b}'s y-coordinate + sin({_u} * 3.141592 * 4) / 30
+				loop all entities in radius 0.3 around {_b}:
+					if loop-entity is {_lock}:
+						set {_h} to loop-entity's health
+						damage loop-entity by (getDMG({_sht}, loop-entity) + {prestige::defz::%{_sht}%::skillup} * 1.5)
+						if loop-entity's health = {_h}:
+							set loop-entity's health to loop-entity's health - (1.5 * getDMG({_sht}, loop-entity)/{_num} + {prestige::defz::%{_sht}%::skillup} * 1.5)
+						if loop-entity's health <= 0:
+							set {_coin} to (100 + {prestige::defz::%{_sht}%::coin}) / 100 * (1 + ({defz::%{_sht}'s world%::playing::round} - 1)/10) * 20
+							set {defz::coin::%{_sht}%} to {_coin} + {defz::coin::%{_sht}%}
+							if {defz::mana::%{_sht}%} is not set:
+								set {defz::mana::%{_sht}%} to 0
+							if {defz::mana::%{_sht}%} + 1 > 100:
+								set {defz::mana::%{_sht}%} to 100
+							else:
+								set {defz::mana::%{_sht}%} to {defz::mana::%{_sht}%} + 1
+							set {_xp} to 10 * (({defz::%{_sht}'s world%::playing::round} - 1) + 1)*(1+{prestige::defz::%{_sht}%::exp})
+							xpadd({_sht}, {_xp}, "monsterkill")
+							if {defz::%{_sht}'s world%::playing::hardmode} is true:
+								add 7.5 to {defz::%{_sht}'s world%::playing::score}
+							else:
+								add 5 to {defz::%{_sht}'s world%::playing::score}
+						stop
+					
+			else:
+				stop
+
+function W4sk2(sht: player):
+	loop 1 times:
+		if {_sht}'s health <= 0:
+			stop
+		set {_b} to {_sht}'s head location
+		set {_b} to location 0.2 meter infront of {_b}
+		#정확도
+		add random number between -0 and 0 to {_b}'s pitch
+		add random number between -0 and 0 to {_b}'s yaw
+		set {_u} to 0
+		loop 5000 times:
+			set {_b} to location 0.1 meter infront of {_b}
+			loop all blocks in radius 0.1 around {_b}:
+				if loop-block is solid:
+					if loop-block is not air:
+						if loop-block is not barrier:
+							if loop-block is not void air:
+								set {_detect} to true
+								stop 
+		if {_detect} is true:
+			set {_b} to {_sht}'s head location
+			set {_b} to location 0.2 meter infront of {_b}
+			loop 5000 times:
+				show 5 black colored dust with speed 0.001 at {_b}
+				set {_b} to location 0.1 meter infront of {_b}
+
+function W4p1(sht: player):
+	set {_s} to 5
+	loop 180 times:
+		if {_h} is not set:
+			set {_h} to 0
+		set {_h} to {_h} + random number between -0.1 to 0.1
+		wait 1 tick
+		set {_b} to {_sht}'s location
+		set {_b}'s x-coordinate to {_sht}'s x-coordinate + sin(loop-number * 3.141592 * {_s})
+		set {_b}'s y-coordinate to {_sht}'s y-coordinate + (sin(loop-number * 3.141592 * {_s}/ 2  + {_h} * 3.141592 )*cos(loop-number * 3.141592 / 2 * {_s} + {_h} * 3.141592 ))/5 +2/3
+		set {_b}'s z-coordinate to {_sht}'s z-coordinate + cos(loop-number * 3.141592 * {_s})
+		show 5 black colored dust with speed 0.001 at {_b}
+command /setmetta <text>:
+	permission: admin.use
+	trigger:
+		set {defz::%player's world%::skill::setting::%player%} to arg-1
+
+command /sethp <number>:
+	permission: admin.use
+	trigger:
+		set {setting::defz::%player%::health} to arg-1
+		set player's health to 10 * {setting::defz::%player%::health} / {setting::defz::%player%::maxhealth}
+
+command /circle:
+    permission: admin.use
+    trigger:
+        spawn an armor stand at player's location
+        set {_a} to spawned armor stand
+        set gravity of {_a} to false
+        set {circle} to true
+        set {_l} to player's location
+        set {_radius} to 1
+        set {_angle} to 20
+        set {_rotation} to 180
+        set {_current} to 1
+        while {circle} is true:
+            wait 1 tick
+            broadcast {_l}
+            add {_angle} to {_current}
+            set {_l} to {_location}
+            add ((cos ({_rotation} / 180) * 3.14159265358979323846) * ((cos (({_current} / 180) * 3.14159265358979323846)) * {_radius})) to x-loc of {_l}
+            add (sin ({_rotation} / 180) * 3.14159265358979323846) * ((cos (({_current} / 180) * 3.14159265358979323846)) * {_radius}) to y-loc of {_l}
+            add (sin (({_current} / 180) * 3.14159265358979323846)) * {_radius} to z-loc of {_l}
+            teleport player to {_l}
+
+on right click:
+	if name of player's tool is "&d던지는 tnt":
+		cancel event
+		spawn 1 primed TNT at location of block above player
+		set fuse time of the last spawned primed TNT to 60
+		wait 1 tick
+		push last spawned tnt in direction of player with force 1
+		set {projectile::%last spawned tnt's uuid%} to player
+		remove 1 TNT from player's inventory
+
+on explosion:
+	if {projectile::%event-entity's uuid%} is set:
+		cancel event
+		create a safe explosion with force 2 at event-location
+		loop all entities in radius 4 around event-location:
+			if loop-entity is not a player:
+				damage loop-entity by 30
+				damage loop-entity by 30
+				wait 1 tick
+				if loop-entity's health < 0.1:
+					set {_coin} to (100 + {prestige::defz::%{projectile::%event-entity's uuid%}%::coin}) / 100 * (1 + ({defz::playing::round} - 1)/10) * 15
+					add {_coin} to {defz::coin::%{projectile::%event-entity's uuid%}%}
+					if {defz::playing::hardmode} is true:
+						add 15 to {defz::playing::score}
+					else:
+						add 10 to {defz::playing::score}
+					message "<light green><bold>TNT KILL! +%{_coin}%" to {projectile::%event-entity's uuid%}
+			else:
+				damage loop-entity by 0
+		clear {projectile::%event-entity's uuid%}
+		
+on entity target:
+	if event-entity is wolf:
+		if event-entity's target is a player:
+			cancel event
+
+on damage:
+	if {defz::%victim's world%::playing::playing} is set:
+		if {defz::%attacker's world%::skill::setting::%attacker%} is "atk":
+			if projectile is not set:
+				set damage to damage * {setting::defz::%attacker%::attackrate}
+		if attacker is a golem:
+			if {defz::%attacker's world%::skill::setting::%{defz::golem::%attacker%}%} is "meta2":
+				set damage to damage * 2
+			set damage to damage * (1+{prestige::defz::%{defz::golem::%attacker%}%::atkgolem})
+		if {defz::%attacker's world%::skill::setting::%attacker%} is "kill":
+			set damage to 2 * damage
+		if {defz::%victim's world%::skill::setting::%victim%} is "kill":
+			set damage to 2 * damage
+
+on death:
+	if {defz::%attacker's world%::skill::setting::%attacker%} is "kill":
+		if {defz::skill::killcool::%attacker%} > 0:
+			if {defz::skill::killcool::%attacker%} + 2 <= 15:
+				add 2 to {defz::skill::killcool::%attacker%}
+			else:
+				set {defz::skill::killcool::%attacker%} to 15
+						
+every seconds:
+	while {defz::pause} is true:
+		stop
+	loop {defz::skill::killcool::*}:
+		if {defz::skill::killcool::%loop-index%} > 0:
+			subtract 1 from {defz::skill::killcool::%loop-index%}
+		else:
+			set {defz::skill::killcool::%loop-index%} to 0
+on entity target:
+	if {defz::skill::killcool::%entity's target%} > 0:
+		cancel event
+every seconds:
+	loop all players:
+		if {defz::%loop-player's world%::playing::playing} is set:
+			if {defz::playing::spect::%loop-player%} is not set:
+				if {defz::%loop-player's world%::skill::setting::%loop-player%} is "hp":
+					loop all players in radius 5 around loop-player:
+						if {defz::playing::spect::%loop-player-2%} is not set:
+							if {defz::%loop-player-2's world%::skill::setting::%loop-player-2%} is not "hp":
+								if {setting::defz::%loop-player-2%::health} < {setting::defz::%loop-player-2%::maxhealth}:
+									set {setting::defz::%loop-player-2%::health} to {setting::defz::%loop-player-1%::maxhealth} / 20 + {setting::defz::%loop-player-2%::health}
+									if {setting::defz::%loop-player-2%::health} + {setting::defz::%loop-player-1%::maxhealth} / 20 > {setting::defz::%loop-player-2%::maxhealth}:
+										set {setting::defz::%loop-player-2%::health} to {setting::defz::%loop-player-2%::maxhealth}
+								set loop-player-2's health to 10 * {setting::defz::%loop-player-2%::health} / {setting::defz::%loop-player-2%::maxhealth}
+
+on heal:
+	if {defz::%player's world%::playing::playing} is set:
+		cancel event
+		
+command /cl:
+	permission: admin.use
+	trigger:
+		clear {leveling::defz::%player%::level}
+
+function maxxp(level: integer) :: number:
+	set {_b} to {_level} + 1
+	subtract 1 from {_b}
+	set {_c} to {_b}^2
+	set {_a} to (100 * {_c}) + 100
+	return {_a}
+
+function xpadd(pl: player, xp: number, type: text) :: number:
+	if {_type} is not "monsterkill":
+		message "&6XP get! %{_xp}%" to {_pl}
+	if {leveling::defz::%{_pl}%::xp::full} is not set:
+		set {leveling::defz::%{_pl}%::xp::full} to 0
+	if {leveling::defz::%{_pl}%::xp::count} is not set:
+		set {leveling::defz::%{_pl}%::xp::count} to 0
+	set {leveling::defz::%{_pl}%::xp::full} to {_xp} + {leveling::defz::%{_pl}%::xp::full}
+	set {leveling::defz::%{_pl}%::xp::count} to {_xp} + {leveling::defz::%{_pl}%::xp::count}
+	if {leveling::defz::%{_pl}%::level} is not set:
+		set {leveling::defz::%{_pl}%::level} to 0
+	while {leveling::defz::%{_pl}%::xp::count} > maxxp({leveling::defz::%{_pl}%::level}):
+		levelup({_pl}, {_xp})
+
+function levelup(pl: player, lv: integer):
+	add 1 to {leveling::defz::%{_pl}%::level}
+	add 1 to {prestige::defz::%{_pl}%::selector}
+	set {_xp} to maxxp({leveling::defz::%{_pl}%::level})
+	message "&6&lLEVEL UP! %{leveling::defz::%{_pl}%::level} - 1% -> %{leveling::defz::%{_pl}%::level}%" to {_pl}
+	set {leveling::defz::%{_pl}%::xp::count} to {leveling::defz::%{_pl}%::xp::count} - {_xp}
+
+every seconds:
+	loop all players:
+		if {defz::%loop-player's world%::playing::playing} is true:
+			set loop-player's level to {leveling::defz::%loop-player%::level}
+			set {_c} to {leveling::defz::%loop-player%::level} - 1
+			set {_a} to calcExperience({leveling::defz::%loop-player%::level})
+			subtract calcExperience({_c}) from {_a}
+			set {_d} to {leveling::defz::%loop-player%::level}
+			set {_b} to maxxp({_d})
+			set {_res} to {leveling::defz::%loop-player%::xp::count} / {_b}
+			set level progress of the loop-player to {_res}
+	loop all players:
+		if loop-player is in "lobby":
+			reveal loop-player from all players
+			reveal all players from loop-player

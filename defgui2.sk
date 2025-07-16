@@ -1,0 +1,356 @@
+function shop(pl:player, code: integer):
+	if {_code} is 1:
+		if {defz::upgrade::armor::%{_pl}%} is not set:
+			if {defz::coin::%{_pl}%} >= 30*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 30*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 2 of metadata tag "DEFMAIN" of {_pl} to golden helmet named "<reset><gold>금갑옷으로 업그레이드" with lore "<reset><light blue>금갑옷으로 업그레이드 합니다" and "<reset><gold>%50*(1 - {prestige::defz::%{_pl}%::sale})%코인"
+				add 1 to {defz::upgrade::armor::%{_pl}%}
+				set {_pl}'s helmet to leather helmet
+				set {_pl}'s chestplate to leather chestplate
+				set {_pl}'s leggings to leather leggings
+				set {_pl}'s boots to leather boots
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::armor::%{_pl}%} is 1:
+			if {defz::coin::%{_pl}%} >= 50*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 50*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 2 of metadata tag "DEFMAIN" of {_pl} to chainmail helmet named "<reset><dark gray>사슬갑옷으로 업그레이드" with lore "<reset><light blue>사슬갑옷으로 업그레이드 합니다" and "<reset><gold>%90*(1 - {prestige::defz::%{_pl}%::sale})%코인"
+				add 1 to {defz::upgrade::armor::%{_pl}%}
+				set {_pl}'s helmet to golden helmet
+				set {_pl}'s chestplate to golden chestplate
+				set {_pl}'s leggings to golden leggings
+				set {_pl}'s boots to golden boots
+				wait 1 tick
+				loop all items in the inventory of {_pl}:
+					if loop-item is a helmet:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a chestplate:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a leggings:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a boots:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::armor::%{_pl}%} is 2:
+			if {defz::coin::%{_pl}%} >= 90*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 90*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 2 of metadata tag "DEFMAIN" of {_pl} to iron helmet named "<reset><gray>철갑옷으로 업그레이드" with lore "<reset><light blue>철갑옷으로 업그레이드 합니다" and "<reset><gold>%170*(1 - {prestige::defz::%{_pl}%::sale})%코인"
+				add 1 to {defz::upgrade::armor::%{_pl}%}
+				set {_pl}'s helmet to chainmail helmet
+				set {_pl}'s chestplate to chainmail chestplate
+				set {_pl}'s leggings to chainmail leggings
+				set {_pl}'s boots to chainmail boots
+				loop all items in the inventory of {_pl}:
+					if loop-item is a helmet:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a chestplate:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a leggings:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a boots:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::armor::%{_pl}%} is 3:
+			if {defz::coin::%{_pl}%} >= 170*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 170*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 2 of metadata tag "DEFMAIN" of {_pl} to diamond helmet named "<reset><light blue>다이아몬드갑옷으로 업그레이드" with lore "<reset><light blue>다이아몬드갑옷으로 업그레이드 합니다" and "<reset><gold>%330*(1 - {prestige::defz::%{_pl}%::sale})%코인"
+				add 1 to {defz::upgrade::armor::%{_pl}%}
+				set {_pl}'s helmet to iron helmet
+				set {_pl}'s chestplate to iron chestplate
+				set {_pl}'s leggings to iron leggings
+				set {_pl}'s boots to iron boots
+				loop all items in the inventory of {_pl}:
+					if loop-item is a helmet:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a chestplate:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a leggings:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a boots:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::armor::%{_pl}%} is 4:
+			if {defz::coin::%{_pl}%} >= 330*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 330*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 2 of metadata tag "DEFMAIN" of {_pl} to netherite helmet named "<reset><dark gray>네더라이트갑옷으로 업그레이드" with lore "<reset><dark gray>네더라이트갑옷으로 업그레이드 합니다" and "<reset><gold>%390*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+				add 1 to {defz::upgrade::armor::%{_pl}%}
+				set {_pl}'s helmet to diamond helmet
+				set {_pl}'s chestplate to diamond chestplate
+				set {_pl}'s leggings to diamond leggings
+				set {_pl}'s boots to diamond boots
+				loop all items in the inventory of {_pl}:
+					if loop-item is a helmet:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a chestplate:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a leggings:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a boots:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::armor::%{_pl}%} is 5:
+			if {defz::coin::%{_pl}%} >= 390*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 390*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 2 of metadata tag "DEFMAIN" of {_pl} to barrier named "<reset><light red>최대강화됨!" with lore "<reset><light blue>당신은 이미 최대강화상태입니다!" and "<reset><gold>0코인"
+				add 1 to {defz::upgrade::armor::%{_pl}%}
+				set {_pl}'s helmet to netherite helmet
+				set {_pl}'s chestplate to netherite chestplate
+				set {_pl}'s leggings to netherite leggings
+				set {_pl}'s boots to netherite boots
+				loop all items in the inventory of {_pl}:
+					if loop-item is a helmet:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a chestplate:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a leggings:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					if loop-item is a boots:
+						enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+	if {_code} is 2:
+		if {defz::upgrade::weapon::%{_pl}%} is not set:
+			if {defz::coin::%{_pl}%} >= 30*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 30*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 0 of metadata tag "DEFMAIN" of {_pl} to gold sword named "<reset><gold>금검으로 업그레이드" with lore "<reset><light blue>금검으로 업그레이드 합니다" and "<reset><gold>%50*(1 - {prestige::defz::%{_pl}%::sale})%코인"
+				add 1 to {defz::upgrade::weapon::%{_pl}%}
+				give {_pl} 1 wooden sword
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::weapon::%{_pl}%} is 1:
+			if {defz::coin::%{_pl}%} >= 50*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 50*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 0 of metadata tag "DEFMAIN" of {_pl} to stone sword named "<reset><dark gray>돌검으로 업그레이드" with lore "<reset><light blue>돌검으로 업그레이드 합니다" and "<reset><gold>%90*(1 - {prestige::defz::%{_pl}%::sale})%코인"
+				add 1 to {defz::upgrade::weapon::%{_pl}%}
+				remove 1 wooden sword from {_pl}
+				give {_pl} 1 golden sword
+				loop all items in the inventory of {_pl}:
+					if loop-item is a sword:
+						enchant loop-item with "sharpness %{defz::upgrade::swordupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::weapon::%{_pl}%} is 2:
+			if {defz::coin::%{_pl}%} >= 90*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 90*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 0 of metadata tag "DEFMAIN" of {_pl} to iron sword named "<reset><gray>철검으로 업그레이드" with lore "<reset><light blue>철검으로 업그레이드 합니다" and "<reset><gold>%170*(1 - {prestige::defz::%{_pl}%::sale})%코인"
+				add 1 to {defz::upgrade::weapon::%{_pl}%}
+				remove 1 golden sword from {_pl}
+				give {_pl} 1 stone sword
+				loop all items in the inventory of {_pl}:
+					if loop-item is a sword:
+						enchant loop-item with "sharpness %{defz::upgrade::swordupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::weapon::%{_pl}%} is 3:
+			if {defz::coin::%{_pl}%} >= 170*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 170*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 0 of metadata tag "DEFMAIN" of {_pl} to diamond sword named "<reset><light blue>다이아몬드검으로 업그레이드" with lore "<reset><light blue>다이아몬드검으로 업그레이드 합니다" and "<reset><gold>%330*(1 - {prestige::defz::%{_pl}%::sale})%코인"
+				add 1 to {defz::upgrade::weapon::%{_pl}%}
+				remove 1 stone sword from {_pl}
+				give {_pl} 1 iron sword
+				loop all items in the inventory of {_pl}:
+					if loop-item is a sword:
+						enchant loop-item with "sharpness %{defz::upgrade::swordupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::weapon::%{_pl}%} is 4:
+			if {defz::coin::%{_pl}%} >= 330*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 330*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 0 of metadata tag "DEFMAIN" of {_pl} to netherite sword named "<reset><dark gray>네더라이트검으로 업그레이드" with lore "<reset><dark gray>네더라이트검으로 업그레이드 합니다" and "<reset><gold>%390*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+				add 1 to {defz::upgrade::weapon::%{_pl}%}
+				remove 1 iron sword from {_pl}
+				give {_pl} 1 diamond sword
+				loop all items in the inventory of {_pl}:
+					if loop-item is a sword:
+						enchant loop-item with "sharpness %{defz::upgrade::swordupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else if {defz::upgrade::weapon::%{_pl}%} is 5:
+			if {defz::coin::%{_pl}%} >= 390*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 390*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				set slot 0 of metadata tag "DEFMAIN" of {_pl} to barrier named "<reset><light red>최대강화됨!" with lore "<reset><light blue>당신은 이미 최대강화상태입니다!" and "<reset><gold>0코인"
+				add 1 to {defz::upgrade::weapon::%{_pl}%}
+				remove 1 diamond sword from {_pl}
+				give {_pl} 1 netherite sword
+				loop all items in the inventory of {_pl}:
+					if loop-item is a sword:
+						enchant loop-item with "sharpness %{defz::upgrade::swordupgrade::%{_pl}%}%" parsed as enchantment type
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+	if {_code} is 3:
+		if {_pl} has bow:
+			if {defz::coin::%{_pl}%} >= 50*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 50*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				give {_pl} 16 arrow
+				set slot 4 of metadata tag "DEFMAIN" of {_pl} to arrow named "<reset><magenta>화살" with lore "<reset><light blue>화살x16개" and "<reset><gold>100코인"
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else:
+			if {defz::coin::%{_pl}%} >= 150*(1 - {prestige::defz::%{_pl}%::sale}):
+				subtract 150*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				message "<light green>구매에 성공했습니다" to {_pl}
+				play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+				give {_pl} 16 arrow
+				give {_pl} 1 bow
+				loop all items in {_pl}'s inventory:
+					if loop-item is arrow:
+						set {_amount} to number of loop-item in {_pl}'s inventory
+						add {_amount} to {_a::%{_pl}%}
+				if {defz::arrowbuy::%{_pl}%} is true:
+					if {_a::%{_pl}%} < 64:
+						set slot 4 of metadata tag "DEFMAIN" of {_pl} to arrow named "<reset><magenta>화살" with lore "<reset><light blue>화살x16개" and "<reset><gold>100코인" and "<reset><light green>&l✓ 칼로 몬스터를 처치하세요"
+					else:
+						set slot 4 of metadata tag "DEFMAIN" of {_pl} to arrow named "<reset><magenta>화살" with lore "<reset><light blue>화살x16개" and "<reset><gold>100코인" and "<reset><light red>&l✗ 화살은 한세트 이상 구매할 수 없습니다"
+				else:
+					set slot 4 of metadata tag "DEFMAIN" of {_pl} to arrow named "<reset><magenta>화살" with lore "<reset><light blue>화살x16개" and "<reset><gold>100코인" and "<reset><light red>&l✗ 칼로 몬스터를 처치하세요"
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+	if {_code} is 4:
+		if {defz::coin::%{_pl}%} >= 50*(1 - {prestige::defz::%{_pl}%::sale}):
+			subtract 50*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+			message "<light green>구매에 성공했습니다" to {_pl}
+			play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+			give {_pl} 16 cooked beef
+		else:
+			message "<light red>돈이 부족합니다!" to {_pl}
+	if {_code} is 5:
+		if {defz::coin::%{_pl}%} >= 40*(1 - {prestige::defz::%{_pl}%::sale}):
+			subtract 40*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+			message "<light green>구매에 성공했습니다" to {_pl}
+			play sound "note_block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+			give {_pl} 1 golden apple
+		else:
+			message "<light red>돈이 부족합니다!" to {_pl}
+	if {_code} is 6:
+		if {defz::coin::%{_pl}%} >= 30*(1 - {prestige::defz::%{_pl}%::sale}):
+			subtract 30*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+			message "<light green>구매에 성공했습니다" to {_pl}
+			play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+			give {_pl} 16 white wool
+		else:
+			message "<light red>돈이 부족합니다!" to {_pl}
+	if {_code} is 7:
+		if {defz::coin::%{_pl}%} >= 15*(1 - {prestige::defz::%{_pl}%::sale}):
+			subtract 15*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+			message "<light green>구매에 성공했습니다" to {_pl}
+			play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+			add 10 to {defz::battery::%{_pl}%::value}
+		else:
+			message "<light red>돈이 부족합니다!" to {_pl}
+	if {_code} is 8:
+		if {defz::coin::%{_pl}%} >= 70*(1 - {prestige::defz::%{_pl}%::sale}):
+			subtract 70*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+			message "<light green>구매에 성공했습니다" to {_pl}
+			play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+			give {_pl} 1 shears
+		else:
+			message "<light red>돈이 부족합니다!" to {_pl}
+	if {_code} is 9:
+		if {defz::coin::%{_pl}%} >= 500*(1 - {prestige::defz::%{_pl}%::sale}):
+			subtract 500*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+			message "<light green>구매에 성공했습니다" to {_pl}
+			play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+			give a wolf spawn egg named "<reset>골렘스폰알" to {_pl}
+		else:
+			message "<light red>돈이 부족합니다!" to {_pl}
+	if {_code} is 10:
+		if {defz::coin::%{_pl}%} >= 100*(1 - {prestige::defz::%{_pl}%::sale}):
+			subtract 100*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+			message "<light green>구매에 성공했습니다" to {_pl}
+			play sound "block.note_block.pling" with volume 1 and pitch 1 for {_pl}
+			give a tnt named "<reset>&d던지는 tnt" to {_pl}
+		else:
+			message "<light red>돈이 부족합니다!" to {_pl}
+
+function upgrade(pl:player, code: integer):
+	if {_code} is 1:
+		if {_pl} has a bow:
+			if {defz::coin::%{_pl}%} >= (350)*(1 - {prestige::defz::%{_pl}%::sale}):
+				if {defz::upgrade::bowupgrade::%{_pl}%} is not set:
+					set {defz::upgrade::bowupgrade::%{_pl}%} to 0
+				if {defz::upgrade::bowupgrade::%{_pl}%} < 40:
+					subtract (350)*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+					add 1 to {defz::upgrade::bowupgrade::%{_pl}%}
+					loop all items in the inventory of {_pl}:
+						if loop-item is a bow:
+							enchant loop-item with "power %{defz::upgrade::bowupgrade::%{_pl}%}%" parsed as enchantment type
+							message "<light green>구매에 성공했습니다" to {_pl}
+							set slot 13 of metadata tag "DEFMAIN" of {_pl} to book named "<reset><magenta>활 인첸트 강화" with lore "<reset><light blue>힘을 강화합니다" and "<reset><gold>%(350)*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+							stop trigger
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else:
+			message "<light red>활이 없습니다" to {_pl}
+	if {_code} is 2:
+		if {_pl} has a sword:
+			if {defz::coin::%{_pl}%} >= (200)*(1 - {prestige::defz::%{_pl}%::sale}):
+				if {defz::upgrade::swordupgrade::%{_pl}%} is not set:
+					set {defz::upgrade::swordupgrade::%{_pl}%} to 0
+				subtract (200)*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+				add 1 to {defz::upgrade::swordupgrade::%{_pl}%}
+				loop all items in the inventory of {_pl}:
+					if loop-item is a sword or "netherite sword":
+						enchant loop-item with "sharpness %{defz::upgrade::swordupgrade::%{_pl}%}%" parsed as enchantment type
+						message "<light green>구매에 성공했습니다" to {_pl}
+						set slot 9 of metadata tag "DEFMAIN" of {_pl} to book named "<reset><magenta>검 인첸트 강화" with lore "<reset><light blue>힘을 강화합니다" and "<reset><gold>%(200)*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+						stop trigger
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else:
+			message "<light red>검이 없습니다" to {_pl}
+	if {_code} is 3:
+		if {_pl}'s helmet is not air:
+			if {defz::coin::%{_pl}%} >= (150+ 75 * {defz::upgrade::armorupgrade::%{_pl}%})*(1 - {prestige::defz::%{_pl}%::sale}):
+				if {defz::upgrade::armorupgrade::%{_pl}%} is not set:
+					set {defz::upgrade::armorupgrade::%{_pl}%} to 0
+				if {defz::upgrade::armorupgrade::%{_pl}%} < 100:
+				
+					subtract (150+ 75 * {defz::upgrade::armorupgrade::%{_pl}%})*(1 - {prestige::defz::%{_pl}%::sale}) from {defz::coin::%{_pl}%}
+					add 1 to {defz::upgrade::armorupgrade::%{_pl}%}
+					loop all items in the inventory of {_pl}:
+						if loop-item is a helmet:
+							enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+						if loop-item is a chestplate:
+							enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+						if loop-item is a leggings:
+							enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+						if loop-item is a boots:
+							enchant loop-item with "protection %{defz::upgrade::armorupgrade::%{_pl}%}%" parsed as enchantment type
+					message "<light green>구매에 성공했습니다" to {_pl}
+					set slot 11 of metadata tag "DEFMAIN" of {_pl} to book named "<reset><magenta>갑옷 인첸트 강화" with lore "<reset><light blue>보호을 강화합니다" and "<reset><gold>%(150+ 75 * {defz::upgrade::armorupgrade::%{_pl}%})*(1 - {prestige::defz::%{_pl}%::sale})%코인" and "<black>Fzem:^[wk639Ce-*"
+				else:
+					message "<light red>최대강화 입니다!" to {_pl}
+			else:
+				message "<light red>돈이 부족합니다!" to {_pl}
+		else:
+			message "<light red>갑옷이 없습니다" to {_pl}

@@ -1,0 +1,40 @@
+function zdsettime(stage: int, timer: number):
+	if {db::defz::timer::stage::%{_stage}%} is not set:
+		set {db::defz::timer::stage::%{_stage}%} to 0
+	if {db::defz::timer::count::%{_stage}%} is not set:
+		set {db::defz::timer::count::%{_stage}%} to 0
+	set {db::defz::timer::stage::%{_stage}%} to {db::defz::timer::stage::%{_stage}%} + {_timer}
+	set {db::defz::timer::count::%{_stage}%} to {db::defz::timer::count::%{_stage}%} + 1
+function zddmgdown(stage: int, dmg: int):
+	set {db::defz::timer::dmgdown::%{_stage}%} to {db::defz::timer::dmgdown::%{_stage}%} + {_dmg}
+function openTimerGUI(pl: player):
+	set metadata tag "DBTIMER" of {_pl} to chest inventory with 6 rows named "Timer"
+	loop 30 times:
+		if {db::defz::timer::stage::%loop-number%} is set:
+			set {_db::timer::%loop-number%} to {db::defz::timer::stage::%loop-number%} / {db::defz::timer::count::%loop-number%}
+	set {_sorted::*} to sorted {_db::timer::*}
+	loop 30 times:
+		set {_hp} to (((loop-number)^2.25)/1.5 + 20) * 3 * (1 - (2/3)^4)
+		if {_db::timer::%loop-number%} is set:
+			if {_db::timer::%loop-number%} = {_sorted::1}:
+				set slot loop-number - 1 of metadata tag "DBTIMER" of {_pl} to book named "<reset>Stage %loop-number% &c[NEED BUFF!]" with lore "&aAverage Time: %{_db::timer::%loop-number%}%" and "&atotal: %{db::defz::timer::stage::%loop-number%}%" and "&acount: %{db::defz::timer::count::%loop-number%}%" and "&cMonster HP(1): %{_hp}%"
+			else:
+				set slot loop-number - 1 of metadata tag "DBTIMER" of {_pl} to book named "<reset>Stage %loop-number%" with lore "&aAverage Time: %{_db::timer::%loop-number%}%" and "&atotal: %{db::defz::timer::stage::%loop-number%}%" and "&acount: %{db::defz::timer::count::%loop-number%}%" and "&cMonster HP(1): %{_hp}%"
+		else:
+			set slot loop-number - 1 of metadata tag "DBTIMER" of {_pl} to book named "<reset>Stage %loop-number%" with lore "&aAverage Time: NONE COUNT!" and "&atotal: 0" and "&acount: 0" and "&cMonster HP(1): %{_hp}%"
+	open (metadata tag "DBTIMER" of {_pl}) to {_pl}
+
+on inventory click:
+	if event-inventory = (metadata tag "DBTIMER" of player):
+		cancel event
+
+command /deftimer:
+	permission: admin.use
+	trigger:
+		openTimerGUI(player)
+
+command /dbcleaner:
+	permission: admin.use
+	trigger:
+		zdloopend("db::defz")
+

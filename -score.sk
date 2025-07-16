@@ -1,0 +1,78 @@
+every 1 seconds:
+	add 1 to {def::counting::sec::score}
+	if {def::counting::sec::score} > 10:
+		set {def::counting::sec::score} to 0
+	loop all players:
+		if loop-player is online:
+			if {defz::%loop-player's world%::playing::playing} is true:
+				if {defz::pause} is not set:
+					add 1 to {defpl}
+					if {def::counting::sec::score} < 5:
+						set {def::entitys::*} to {defen}
+						set {def::players::*} to {defpl}
+						wipe loop-player's sidebar
+						set name of sidebar of loop-player to "<light red><italic><italic>ZOMBIE SURVIVAL"
+						if {defz::skill::setting::%loop-player%} is "atk":
+							set score "<gold>직업: 어태커" in sidebar of loop-player to 6
+						else if {defz::%loop-player's world%::skill::setting::%loop-player%} is "def":
+							set score "<gold>직업: 대장장이" in sidebar of loop-player to 6
+						else if {defz::%loop-player's world%::skill::setting::%loop-player%} is "hp":
+							set score "<gold>직업: 힐러" in sidebar of loop-player to 6
+						else if {defz::%loop-player's world%::skill::setting::%loop-player%} is "meta1":
+							set score "<gold>직업: 거너" in sidebar of loop-player to 6
+						else if {defz::%loop-player's world%::skill::setting::%loop-player%} is "meta2":
+							set score "<gold>직업: 서머너" in sidebar of loop-player to 6
+						else if {defz::%loop-player's world%::skill::setting::%loop-player%} is "kill":
+							set score "<gold>직업: 암살자" in sidebar of loop-player to 6
+						else if {defz::%loop-player's world%::skill::setting::%loop-player%} is "tame":
+							set score "<gold>직업: 조련사" in sidebar of loop-player to 6
+						else:
+							set score "<gold>직업: &c없음" in sidebar of loop-player to 6
+						set score "<light red>신고하기: /신고" in sidebar of loop-player to 5
+						if {defz::%loop-player's world%::playing::monsters} is not set:
+							set {defz::%loop-player's world%::playing::monsters} to 0
+						set score "<light red>남은 몬스터: %{defz::%loop-player's world%::playing::monsters}%" in sidebar of loop-player to 4
+						set score "<light green>SCORE: <reset>%{defz::%loop-player's world%::playing::score}%" in sidebar of loop-player to 3
+						set score "<yellow>남은 인원: %{defz::%loop-player's world%::playing::number::player}%" in sidebar of loop-player to 2
+						set score "<yellow>현재 라운드: %{defz::%loop-player's world%::playing::round}%" in sidebar of loop-player to 1
+						set score "<light green>난이도: <reset>%{defz::%loop-player's world%::dif}%" in sidebar of loop-player to 0
+					else if 5 <= {def::counting::sec::score}:
+						if {def::counting::sec::score} < 10:
+							wipe loop-player's sidebar
+							set name of sidebar of loop-player to "<light red><italic><italic>MISSION"
+							if {defz::mission::list::%loop-player%::*} is set:
+								set {_text} to "%{defz::mission::list::%loop-player%::*}%"
+								replace all "and " with ", " in {_text}
+								set {_s::*} to split {_text} at ", "
+								clear {_num}
+								loop {defz::mission::code::%loop-player%::*}:
+									set {_num} to loop-value-2
+									if {defz::mission::type::%loop-player%::%{_num}%} is "personal":
+										set {_text} to "[개인]%{defz::mission::list::%loop-player%::%{_num}%}% (%{defz::mission::value::%loop-player%::%{_num}%}% / %{defz::mission::max::%loop-player%::%{_num}%}%)"
+										set score "%{_text}%" in sidebar of loop-player to {defz::mission::code::%loop-player%::%{_num}%}
+									if {defz::mission::type::%loop-player%::%{_num}%} contain "event":
+										set {_text} to "[이벤트]%{defz::mission::list::%loop-player%::%{_num}%}% (%{defz::mission::value::%loop-player%::%{_num}%}% / %{defz::mission::max::%loop-player%::%{_num}%}%)"
+										set score "%{_text}%" in sidebar of loop-player to {defz::mission::code::%loop-player%::%{_num}%}
+							else:
+								set score "<light red>미션이 없습니다" in sidebar of loop-player to 0
+				else:
+					wipe loop-player's sidebar
+					set name of sidebar of loop-player to "<red><italic><italic>GAME PAUSED"
+					set score " " in sidebar of loop-player to 1
+					set score "  " in sidebar of loop-player to 2
+					set score "<red>게임이 중지되었습니다" in sidebar of loop-player to 3
+					set score "    " in sidebar of loop-player to 4
+					set score "     " in sidebar of loop-player to 5
+				set {_defper} to 100 - damage(loop-player, 100, {defz::upgrade::armor::%loop-player%}, {defz::upgrade::armorupgrade::%loop-player%})
+				if {defz::%loop-player's world%::skill::setting::%loop-player%} is "kill":
+					if {setting::defz::%loop-player%::health} > {setting::defz::%loop-player%::maxhealth}:
+						set {_plhealth} to {setting::defz::%loop-player%::health} - {setting::defz::%loop-player%::maxhealth}
+						send action bar "<magenta>HEALTH: <reset>%2 * {setting::defz::%loop-player%::maxhealth}%+&6%2 * {_plhealth}% <reset> / <gold>coin:<reset> %{defz::coin::%loop-player%}%<reset> / <light blue>방어율:<reset> %{_defper}% / &aVanish TIMER: &r%{defz::skill::killcool::%loop-player%}% / &8배터리: &r%{defz::battery::%loop-player%::value}%" to loop-player
+					else:
+						send action bar "<magenta>HEALTH: <reset>%2 * {setting::defz::%loop-player%::health}% <reset> / <gold>coin:<reset> %{defz::coin::%loop-player%}%<reset> / <light blue>방어율:<reset> %{_defper}% / &aVanish TIMER: &r%{defz::skill::killcool::%loop-player%}% / &8배터리: &r%{defz::battery::%loop-player%::value}%" to loop-player
+				else:
+					if {setting::defz::%loop-player%::health} > {setting::defz::%loop-player%::maxhealth}:
+						set {_plhealth} to {setting::defz::%loop-player%::health} - {setting::defz::%loop-player%::maxhealth}
+						send action bar "<magenta>HEALTH: <reset>%2 * {setting::defz::%loop-player%::maxhealth}%+&6%2 * {_plhealth}% <reset> / <gold>coin:<reset> %{defz::coin::%loop-player%}%<reset> / <light blue>방어율:<reset> %{_defper}% / &8배터리: &r%{defz::battery::%loop-player%::value}%" to loop-player
+					else:
+						send action bar "<magenta>HEALTH: <reset>%2 * {setting::defz::%loop-player%::health}% <reset> / <gold>coin:<reset> %{defz::coin::%loop-player%}%<reset> / <light blue>방어율:<reset> %{_defper}% / &8배터리: &r%{defz::battery::%loop-player%::value}%" to loop-player
